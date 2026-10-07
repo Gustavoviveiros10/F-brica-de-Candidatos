@@ -92,3 +92,14 @@
 }
 .seg button{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
 .seg button svg{width:16px;height:16px}
+
+/* Ficha do candidato: modal central em vez de gaveta lateral */
+.drawer.ficha-modal{width:min(720px,100%);height:auto;max-height:calc(100dvh - 32px);border-radius:20px;overscroll-behavior:contain}
+.ficha-modal .drawer-art{aspect-ratio:720/220}
+.ficha-modal .fields{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+@media (max-width:560px){
+  .overlay.center:has(.ficha-modal){padding:8px}
+  .drawer.ficha-modal{max-height:calc(100dvh - 16px);border-radius:16px}
+  .ficha-modal .drawer-art{aspect-ratio:400/150}
+  .ficha-modal .drawer-body{padding:18px 16px 22px}
+}

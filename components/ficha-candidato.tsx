@@ -22,7 +22,7 @@ type Props = {
 
 const atualizado = (d: number) => (d <= 0 ? "hoje" : d === 1 ? "há 1 dia" : `há ${d} dias`);
 
-// Ficha lateral do candidato, usada na busca, nos salvos e no CRM.
+// Ficha do candidato (modal central), usada na busca, nos salvos e no CRM.
 export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeBusca, rodapeBloqueado, extra }: Props) {
   const t = TEMPERATURAS[c.temperatura] ?? TEMPERATURAS.frio;
   const cat = CATEGORIAS[c.categoria] ?? CATEGORIAS.outros;
@@ -52,8 +52,8 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
   const nome = contato?.nome ?? c.primeiro_nome;
 
   return (
-    <div className="overlay" role="dialog" aria-modal="true" aria-label="Perfil profissional" onClick={(e) => e.target === e.currentTarget && onFechar()}>
-      <aside className="drawer">
+    <div className="overlay center" role="dialog" aria-modal="true" aria-label="Perfil profissional" onClick={(e) => e.target === e.currentTarget && onFechar()}>
+      <section className="drawer ficha-modal">
         <div className="drawer-art">
           <img className="art photo" src={cat.foto} alt="" />
           <button className="icon-btn drawer-close" aria-label="Fechar perfil" onClick={onFechar} autoFocus>
@@ -144,7 +144,7 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
             </p>
           )}
         </div>
-      </aside>
+      </section>
     </div>
   );
 }
