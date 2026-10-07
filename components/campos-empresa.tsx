@@ -8,9 +8,9 @@ type Municipio = { id: number; nome: string };
 
 export type ValoresEmpresa = { empresa?: string; cnpj?: string; whatsapp?: string; uf?: string; municipio_id?: number | string };
 
-// Campos da empresa, usados no cadastro e em "completar cadastro".
-export function CamposEmpresa({ iniciais = {} }: { iniciais?: ValoresEmpresa }) {
-  const [uf, setUf] = useState(iniciais.uf ?? "SP");
+// Estado + cidade (envia municipio_id). Carrega as cidades do estado escolhido.
+export function SeletorCidade({ uf: ufInicial, municipioId, desabilitado }: { uf?: string; municipioId?: number | string; desabilitado?: boolean }) {
+  const [uf, setUf] = useState(ufInicial ?? "SP");
   const [cidades, setCidades] = useState<Municipio[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -32,6 +32,41 @@ export function CamposEmpresa({ iniciais = {} }: { iniciais?: ValoresEmpresa }) 
     };
   }, [uf]);
 
+  return (
+    <div className="grid2">
+      <div className="field">
+        <label htmlFor="su-uf">Estado</label>
+        <select className="select" id="su-uf" name="uf" value={uf} onChange={(e) => setUf(e.target.value)} disabled={desabilitado} required>
+          {UFS.map((u) => (
+            <option key={u}>{u}</option>
+          ))}
+        </select>
+      </div>
+      <div className="field">
+        <label htmlFor="su-cidade">Cidade</label>
+        <select
+          className="select"
+          id="su-cidade"
+          name="municipio_id"
+          key={uf + cidades.length}
+          defaultValue={String(municipioId ?? "")}
+          disabled={carregando || desabilitado}
+          required
+        >
+          <option value="">{carregando ? "Carregando..." : "Selecione"}</option>
+          {cidades.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.nome}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+}
+
+// Campos da empresa, usados no cadastro e em "completar cadastro".
+export function CamposEmpresa({ iniciais = {} }: { iniciais?: ValoresEmpresa }) {
   return (
     <>
       <div className="grid2">
@@ -58,35 +93,7 @@ export function CamposEmpresa({ iniciais = {} }: { iniciais?: ValoresEmpresa }) 
         <label htmlFor="su-whatsapp">WhatsApp da empresa</label>
         <input className="input" id="su-whatsapp" name="whatsapp" type="tel" inputMode="tel" placeholder="(11) 99999-0000" defaultValue={iniciais.whatsapp} required />
       </div>
-      <div className="grid2">
-        <div className="field">
-          <label htmlFor="su-uf">Estado</label>
-          <select className="select" id="su-uf" name="uf" value={uf} onChange={(e) => setUf(e.target.value)} required>
-            {UFS.map((u) => (
-              <option key={u}>{u}</option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label htmlFor="su-cidade">Cidade</label>
-          <select
-            className="select"
-            id="su-cidade"
-            name="municipio_id"
-            key={uf + cidades.length}
-            defaultValue={String(iniciais.municipio_id ?? "")}
-            disabled={carregando}
-            required
-          >
-            <option value="">{carregando ? "Carregando..." : "Selecione"}</option>
-            {cidades.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nome}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <SeletorCidade uf={iniciais.uf} municipioId={iniciais.municipio_id} />
     </>
   );
 }

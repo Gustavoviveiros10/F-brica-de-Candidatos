@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { exigirEmpresa } from "@/lib/conta";
-import { CATEGORIAS, DISPONIBILIDADES, MENSAGEM_PADRAO, TEMPERATURAS, experiencia } from "@/lib/formato";
+import { CATEGORIAS, DISPONIBILIDADES, MENSAGEM_PADRAO, TEMPERATURAS, TURNOS } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
 import { supabaseServer } from "@/lib/supabase/server";
+import type { Candidato } from "@/lib/tipos";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
-import { BotaoLiberar } from "@/components/botao-liberar";
+import { CartaoCandidato } from "@/components/cartao-candidato";
 
 export const metadata = { title: "Buscar candidatos · Fábrica de Candidatos" };
 
 const POR_PAGINA = 20;
 const RAIOS = [10, 20, 30, 50, 80, 150];
 const EXPERIENCIAS = [1, 2, 3, 5, 8];
-const TURNOS: Record<string, string> = { "1_turno": "1º turno", "2_turno": "2º turno", "3_turno": "3º turno", comercial: "Comercial" };
+const TURNOS_FILTRO = Object.fromEntries(Object.entries(TURNOS).filter(([k]) => k !== "qualquer"));
 const ESCOLARIDADES = ["Ensino fundamental", "Ensino médio completo", "Técnico", "Superior"];
 const CONTRATOS = ["CLT", "PJ", "Temporário"];
 
@@ -20,13 +21,6 @@ type Opcoes = {
   funcoes: { id: number; nome: string; categoria: string; total: number }[];
   habilidades: string[];
   cursos: string[];
-};
-
-type Candidato = {
-  id: string; funcao: string; categoria: string; cidade: string; uf: string; distancia_km: number | null;
-  experiencia_anos: number | null; turno: string | null; disponibilidade: string; temperatura: string;
-  habilidades: string[] | null; cursos: string[] | null; cnh: string | null; atualizado_ha_dias: number;
-  relacionado: boolean; ja_liberado: boolean; total: number;
 };
 
 type Filtros = Partial<Record<"funcao" | "categoria" | "cidade" | "raio" | "exp" | "hab" | "curso" | "esc" | "turno" | "contrato" | "disp" | "temp" | "pagina", string>>;
@@ -151,7 +145,7 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
             <Seletor id="hab" rotulo="Máquina / técnica" valor={f.hab} opcoes={opcoes.habilidades} />
             <Seletor id="curso" rotulo="Curso / NR" valor={f.curso} opcoes={opcoes.cursos} />
             <Seletor id="esc" rotulo="Formação" valor={f.esc} opcoes={ESCOLARIDADES} />
-            <Seletor id="turno" rotulo="Turno" valor={f.turno} opcoes={Object.keys(TURNOS)} rotulos={TURNOS} />
+            <Seletor id="turno" rotulo="Turno" valor={f.turno} opcoes={Object.keys(TURNOS_FILTRO)} rotulos={TURNOS_FILTRO} />
             <Seletor id="contrato" rotulo="Contrato" valor={f.contrato} opcoes={CONTRATOS} />
             <Seletor id="disp" rotulo="Disponibilidade até" valor={f.disp} opcoes={Object.keys(DISPONIBILIDADES)} rotulos={DISPONIBILIDADES} />
             <Seletor
@@ -188,7 +182,13 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
                     Funções parecidas
                   </div>
                 )}
-                <LinhaCandidato c={c} empresa={empresa.nome} modelo={empresa.mensagem_whatsapp || MENSAGEM_PADRAO} />
+                <CartaoCandidato
+                  c={c}
+                  empresa={empresa.nome}
+                  modelo={empresa.mensagem_whatsapp || MENSAGEM_PADRAO}
+                  saldo={empresa.saldo_creditos}
+                  cidadeBusca={cidades.find((x) => x.id === cidade)?.nome}
+                />
               </div>
             ))
           ) : (
@@ -235,52 +235,3 @@ function Seletor({ id, rotulo, valor, opcoes, rotulos }: { id: string; rotulo: s
   );
 }
 
-function LinhaCandidato({ c, empresa, modelo }: { c: Candidato; empresa: string; modelo: string }) {
-  const t = TEMPERATURAS[c.temperatura] ?? TEMPERATURAS.frio;
-  const cat = CATEGORIAS[c.categoria] ?? CATEGORIAS.outros;
-  return (
-    <div className="cand">
-      <div className="cand-thumb">
-        <img className="art photo" src={cat.foto} alt="" loading="lazy" />
-      </div>
-      <div className="cand-main">
-        <div className="cand-title">
-          {c.funcao}
-          {c.ja_liberado && <span className="chip chip-ok">Liberado</span>}
-          <span className={`chip ${t.classe}`} title={t.dica}>
-            <Icon name="flame" />
-            {t.rotulo}
-          </span>
-        </div>
-        <div className="cand-meta">
-          <span>
-            <Icon name="pin" />
-            {c.cidade}/{c.uf}
-            {c.distancia_km != null && ` · ${c.distancia_km} km`}
-          </span>
-          <span>
-            <Icon name="briefcase" />
-            {experiencia(c.experiencia_anos)}
-          </span>
-          <span>
-            <Icon name="clock" />
-            {c.disponibilidade === "imediata" ? <b className="avail-now">Imediata</b> : `Em ${DISPONIBILIDADES[c.disponibilidade] ?? c.disponibilidade}`}
-          </span>
-          {c.turno && c.turno !== "qualquer" && <span>{TURNOS[c.turno] ?? c.turno}</span>}
-          {c.cnh && <span>CNH {c.cnh}</span>}
-        </div>
-        <div className="chips">
-          {(c.habilidades ?? []).slice(0, 3).map((s) => (
-            <span key={s} className="chip chip-brand">{s}</span>
-          ))}
-          {(c.cursos ?? []).slice(0, 2).map((s) => (
-            <span key={s} className="chip">{s}</span>
-          ))}
-        </div>
-      </div>
-      <div className="cand-actions">
-        <BotaoLiberar candidatoId={c.id} jaLiberado={c.ja_liberado} cargo={c.funcao} empresa={empresa} modelo={modelo} />
-      </div>
-    </div>
-  );
-}

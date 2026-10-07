@@ -20,6 +20,22 @@ export const DISPONIBILIDADES: Record<string, string> = {
   "30_dias": "30 dias",
 };
 
+export const TURNOS: Record<string, string> = {
+  "1_turno": "1º turno",
+  "2_turno": "2º turno",
+  "3_turno": "3º turno",
+  comercial: "Comercial",
+  qualquer: "Qualquer turno",
+};
+
+// +5511912345678 → (11) 91234-5678
+export function telefone(whatsapp: string) {
+  const d = whatsapp.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return whatsapp;
+}
+
 export const MENSAGEM_PADRAO =
   "Olá, {nome}. Tudo bem? Encontramos seu perfil pela Fábrica de Candidatos e gostaríamos de conversar sobre uma oportunidade para {cargo}. Podemos falar?";
 
