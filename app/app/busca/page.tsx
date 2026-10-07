@@ -4,6 +4,7 @@ import { CATEGORIAS, DISPONIBILIDADES, MENSAGEM_PADRAO, TEMPERATURAS, TURNOS } f
 import { Icon } from "@/lib/icons-component";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { Candidato } from "@/lib/tipos";
+import { comPrimeiroNome } from "@/lib/primeiros-nomes";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoCandidato } from "@/components/cartao-candidato";
 
@@ -62,7 +63,7 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
     }),
   ]);
   const opcoes = (opcoesRaw ?? { cidades: [], funcoes: [], habilidades: [], cursos: [] }) as Opcoes;
-  const candidatos = (linhas ?? []) as Candidato[];
+  const candidatos = await comPrimeiroNome(supabase, (linhas ?? []) as Candidato[]);
   const total = Number(candidatos[0]?.total ?? 0);
   const paginas = Math.ceil(total / POR_PAGINA);
 

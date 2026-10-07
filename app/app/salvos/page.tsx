@@ -3,6 +3,7 @@ import { exigirEmpresa } from "@/lib/conta";
 import { MENSAGEM_PADRAO } from "@/lib/formato";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { Candidato } from "@/lib/tipos";
+import { comPrimeiroNome } from "@/lib/primeiros-nomes";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoCandidato } from "@/components/cartao-candidato";
 
@@ -12,7 +13,7 @@ export default async function Salvos() {
   const { empresa } = await exigirEmpresa();
   const supabase = await supabaseServer();
   const { data } = await supabase.rpc("meus_salvos", { p_limite: 100, p_offset: 0 });
-  const lista = (data ?? []) as Candidato[];
+  const lista = await comPrimeiroNome(supabase, (data ?? []) as Candidato[]);
 
   return (
     <>
