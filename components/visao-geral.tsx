@@ -60,28 +60,6 @@ export function AvisoCreditos({ saldo, teste }: { saldo: number; teste: boolean 
   return null;
 }
 
-export function BuscaRapida({ cidade, grande }: { cidade: Resumo["cidade"]; grande?: boolean }) {
-  return (
-    <form className={`vg-busca${grande ? " grande" : ""}`} action="/app/busca" method="get">
-      <div className="field">
-        <label htmlFor="vg-funcao">Qual vaga você precisa preencher?</label>
-        <select className="select" id="vg-funcao" name="funcao" defaultValue="">
-          <option value="">Todas as áreas</option>
-          {Object.entries(CATEGORIAS)
-            .filter(([k]) => k !== "outros")
-            .map(([k, c]) => (
-              <option key={k} value={`cat:${k}`}>{c.nome}</option>
-            ))}
-        </select>
-      </div>
-      <input type="hidden" name="cidade" value={cidade?.id ?? ""} />
-      <button className="btn btn-primary">
-        <Icon name="search" /> Buscar{cidade ? ` perto de ${cidade.nome}` : ""}
-      </button>
-    </form>
-  );
-}
-
 export function Indicadores({ d }: { d: DadosVisaoGeral }) {
   const f = d.resumo.funil;
   return (
@@ -153,7 +131,7 @@ export function Funil({ funil, parados }: { funil: Record<string, number>; parad
   );
 }
 
-export function Regiao({ resumo, compacto }: { resumo: Resumo; compacto?: boolean }) {
+export function Regiao({ resumo }: { resumo: Resumo }) {
   const { regiao, cidade } = resumo;
   const cats = Object.entries(regiao.por_categoria).sort((a, b) => b[1] - a[1]);
   return (
@@ -174,12 +152,11 @@ export function Regiao({ resumo, compacto }: { resumo: Resumo; compacto?: boolea
                 </>
               )}
             </p>
-            <div className={`vg-areas${compacto ? " compacto" : ""}`}>
+            <div className="vg-areas">
               {cats.map(([k, total]) => {
                 const c = CATEGORIAS[k] ?? CATEGORIAS.outros;
                 return (
                   <Link key={k} className="vg-area" href={`/app/busca?funcao=cat:${k}&cidade=${cidade.id}`}>
-                    {!compacto && <img className="art photo" src={c.foto} alt="" loading="lazy" />}
                     <span>
                       <b>{c.nome}</b>
                       <small>{n(total)} candidatos</small>
@@ -262,71 +239,22 @@ export function BuscasRecentes({ buscas }: { buscas: Resumo["buscas"] }) {
   );
 }
 
-type Tarefa = { icone: string; titulo: string; texto: string; href: string; acao: string; tom?: "warn" | "ok" };
-
-export function Tarefas({ d }: { d: DadosVisaoGeral }) {
-  const f = d.resumo.funil;
-  const t: Tarefa[] = [];
-  if (d.resumo.parados)
-    t.push({ icone: "chat", titulo: `Chamar ${d.resumo.parados} ${d.resumo.parados === 1 ? "contato parado" : "contatos parados"}`, texto: "Liberados há mais de 3 dias e ainda em Novo.", href: "/app/liberados?etapa=novo", acao: "Chamar", tom: "warn" });
-  else if (f.novo)
-    t.push({ icone: "chat", titulo: `Chamar ${f.novo} ${f.novo === 1 ? "contato novo" : "contatos novos"}`, texto: "Quem é chamado no mesmo dia responde mais.", href: "/app/liberados?etapa=novo", acao: "Chamar" });
-  if (f.entrevista)
-    t.push({ icone: "users", titulo: `${f.entrevista} em entrevista`, texto: "Atualize a etapa depois de cada conversa.", href: "/app/liberados?etapa=entrevista", acao: "Ver" });
-  if (d.resumo.salvos)
-    t.push({ icone: "star", titulo: `${d.resumo.salvos} ${d.resumo.salvos === 1 ? "candidato salvo" : "candidatos salvos"}`, texto: "Compare e libere o que mais combina com a vaga.", href: "/app/salvos", acao: "Comparar" });
-  if (d.saldo <= 1)
-    t.push({ icone: "card", titulo: d.saldo ? "Só resta 1 crédito" : "Seus créditos acabaram", texto: "Escolha um plano para continuar liberando.", href: "/app/creditos", acao: "Ver planos", tom: "warn" });
-  if (!totalFunil(f))
-    t.push({ icone: "unlock", titulo: "Libere seu primeiro contato", texto: "Pesquisar é grátis. Você só usa crédito ao liberar.", href: "/app/busca", acao: "Buscar", tom: "ok" });
-
-  return (
-    <div className="panel">
-      <div className="panel-h">
-        <h2>Para fazer agora</h2>
-      </div>
-      <div className="panel-b">
-        {t.length ? (
-          <div className="vg-tarefas">
-            {t.map((x) => (
-              <Link key={x.titulo} className={`vg-tarefa${x.tom ? ` ${x.tom}` : ""}`} href={x.href}>
-                <span className="vg-tarefa-ic"><Icon name={x.icone} /></span>
-                <span>
-                  <b>{x.titulo}</b>
-                  <small>{x.texto}</small>
-                </span>
-                <span className="btn btn-secondary btn-sm">{x.acao}</span>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="muted" style={{ margin: 0 }}>Tudo em dia. Que tal procurar o próximo contratado?</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function Cabecalho({ d, botao = true }: { d: DadosVisaoGeral; botao?: boolean }) {
+function Cabecalho({ d }: { d: DadosVisaoGeral }) {
   return (
     <div className="page-head">
       <div>
         <h1>Olá, {d.nome}</h1>
         <p>{d.bemvindo ? "Conta criada. Você tem 2 contatos grátis para testar." : "Veja como estão suas contratações."}</p>
       </div>
-      {botao && (
-        <Link className="btn btn-primary" href="/app/busca">
-          <Icon name="search" /> Buscar candidatos
-        </Link>
-      )}
+      <Link className="btn btn-primary" href="/app/busca">
+        <Icon name="search" /> Buscar candidatos
+      </Link>
     </div>
   );
 }
 
-// ---------- Layouts ----------
-
-// A: "Painel de comando" — números, funil e região lado a lado.
-export function LayoutComando({ d }: { d: DadosVisaoGeral }) {
+// Visão geral: números, funil e região lado a lado (opção A escolhida em 2026-10-08).
+export function VisaoGeral({ d }: { d: DadosVisaoGeral }) {
   return (
     <>
       <Cabecalho d={d} />
@@ -334,47 +262,11 @@ export function LayoutComando({ d }: { d: DadosVisaoGeral }) {
       <Indicadores d={d} />
       <div className="vg-duas">
         <Funil funil={d.resumo.funil} parados={d.resumo.parados} />
-        <Regiao resumo={d.resumo} compacto />
+        <Regiao resumo={d.resumo} />
       </div>
       <div className="vg-duas">
         <Ultimos ultimos={d.ultimos} />
         <BuscasRecentes buscas={d.resumo.buscas} />
-      </div>
-    </>
-  );
-}
-
-// B: "Busca na frente" — começa pela vaga, com as áreas da região em fotos.
-export function LayoutBusca({ d }: { d: DadosVisaoGeral }) {
-  return (
-    <>
-      <Cabecalho d={d} botao={false} />
-      <AvisoCreditos saldo={d.saldo} teste={d.teste} />
-      <BuscaRapida cidade={d.resumo.cidade} grande />
-      <Regiao resumo={d.resumo} />
-      <Indicadores d={d} />
-      <div className="vg-duas">
-        <Ultimos ultimos={d.ultimos} />
-        <BuscasRecentes buscas={d.resumo.buscas} />
-      </div>
-    </>
-  );
-}
-
-// C: "Para fazer hoje" — lista de próximos passos primeiro, números depois.
-export function LayoutTarefas({ d }: { d: DadosVisaoGeral }) {
-  return (
-    <>
-      <Cabecalho d={d} />
-      <AvisoCreditos saldo={d.saldo} teste={d.teste} />
-      <div className="vg-duas largo">
-        <Tarefas d={d} />
-        <Funil funil={d.resumo.funil} parados={0} />
-      </div>
-      <Indicadores d={d} />
-      <div className="vg-duas">
-        <Ultimos ultimos={d.ultimos} />
-        <Regiao resumo={d.resumo} compacto />
       </div>
     </>
   );

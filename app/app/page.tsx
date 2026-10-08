@@ -1,6 +1,6 @@
 import { exigirEmpresa } from "@/lib/conta";
 import { supabaseServer } from "@/lib/supabase/server";
-import { LayoutComando, type Resumo, type UltimoLiberado } from "@/components/visao-geral";
+import { VisaoGeral as Painel, type Resumo, type UltimoLiberado } from "@/components/visao-geral";
 
 export const metadata = { title: "Visão geral · Fábrica de Candidatos" };
 
@@ -24,7 +24,7 @@ export default async function VisaoGeral({ searchParams }: { searchParams: Promi
   ]);
 
   return (
-    <LayoutComando
+    <Painel
       d={{
         nome: empresa.usuario_nome.split(" ")[0],
         saldo: empresa.saldo_creditos,
