@@ -8,14 +8,14 @@ import type { ContatoCrm } from "@/lib/tipos";
 import { FichaCandidato } from "./ficha-candidato";
 
 type Vista = "lista" | "quadro";
-type Props = { contatos: ContatoCrm[]; empresa: string; modelo: string };
+type Props = { contatos: ContatoCrm[]; empresa: string; modelo: string; etapaInicial?: string | null };
 
 const semAcento = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
-export function CrmLiberados({ contatos: iniciais, empresa, modelo }: Props) {
+export function CrmLiberados({ contatos: iniciais, empresa, modelo, etapaInicial = null }: Props) {
   const [contatos, setContatos] = useState(iniciais);
   const [vista, setVista] = useState<Vista>("lista");
-  const [filtro, setFiltro] = useState<string | null>(null);
+  const [filtro, setFiltro] = useState<string | null>(etapaInicial);
   const [busca, setBusca] = useState("");
   const [abertoId, setAbertoId] = useState<string | null>(null);
   const [, iniciar] = useTransition();
