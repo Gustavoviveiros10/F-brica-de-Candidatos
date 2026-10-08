@@ -7,6 +7,7 @@ const MENSAGENS: Record<string, string> = {
   SEM_EMPRESA: "Complete o cadastro da empresa para liberar contatos.",
   EMPRESA_BLOQUEADA: "A conta da empresa está bloqueada. Fale com o suporte.",
   CANDIDATO_INDISPONIVEL: "Esse candidato não está mais disponível.",
+  SO_ADMIN_DA_EMPRESA: "Só o administrador da empresa pode mudar esses dados.",
   SEM_CREDITOS: "Seus créditos acabaram. Escolha um plano para continuar liberando.",
 };
 
