@@ -201,12 +201,6 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .band-float small{display:flex;align-items:center;gap:4px;font-size:12.5px;color:#5F7391}.band-float small svg{width:13px;height:13px}
 .cta-art,.band-art{display:none}
 .cta-mock{display:flex;justify-content:center;padding-block:clamp(28px,4vw,56px)}
-.cta-card{width:min(380px,100%);background:#fff;color:#0B2140;border-radius:22px;padding:20px;box-shadow:0 40px 80px -24px rgba(0,0,0,.55);transform:rotate(-2deg)}
-.cta-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.cta-card-top b{display:block;font-size:16px}.cta-card-top small{font-size:13px;color:#5F7391}
-.cta-ok{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:#E1F3EA;color:#13774D;flex:none}.cta-ok svg{width:20px;height:20px}
-.cta-card .kv{margin-bottom:16px}
-.cta-card .kv dt{color:#5F7391}
 .mock{border-radius:20px;box-shadow:0 30px 60px -28px rgba(11,33,64,.35)}
 .step-n{background:linear-gradient(135deg,var(--brand),#0F4F95);color:#fff;box-shadow:0 8px 18px -8px rgba(23,99,179,.7)}
 .aud{gap:14px}
@@ -233,6 +227,15 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .home-contraste #planos .plan.featured .btn{background:#1763B3;color:#fff}
 .home-contraste #perguntas{padding-top:clamp(56px,7vw,96px)!important}
 
-@media (max-width:900px){
-  .cta-card{transform:none}
-}
+
+/* Home: exemplos da ficha e da confirmação reais da ferramenta (mesmas classes do app) */
+.ficha-demo.drawer{color:var(--ink);text-align:left;width:100%;height:auto;max-height:none;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 60px -28px rgba(11,33,64,.4)}
+.ficha-demo .drawer-art{aspect-ratio:720/170}
+.ficha-demo .fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ficha-demo .fields:empty{display:none}
+.modal-demo{margin-inline:auto;box-shadow:0 30px 60px -28px rgba(11,33,64,.4);border:1px solid var(--line)}
+.pdemo{display:flex;flex-direction:column;gap:12px}
+.pdemo-tag{align-self:flex-start;font-size:13px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+.pdemo-tag.ok{background:var(--ok-soft);color:var(--ok)}
+.cta-mock .ficha-curta{width:min(420px,100%);transform:rotate(-2deg);box-shadow:0 40px 80px -24px rgba(0,0,0,.55);border:0}
+@media (max-width:900px){.cta-mock .ficha-curta{transform:none}}
