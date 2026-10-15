@@ -28,6 +28,13 @@ export const TURNOS: Record<string, string> = {
   qualquer: "Qualquer turno",
 };
 
+// Data do último cadastro (DD/MM/AAAA). Sem a data exata, estima pelos dias desde o cadastro.
+export function dataCadastro(c: { cadastrado_em?: string | null; atualizado_ha_dias: number }) {
+  if (c.cadastrado_em) return c.cadastrado_em.slice(0, 10).split("-").reverse().join("/");
+  const d = new Date(Date.now() - c.atualizado_ha_dias * 86400000);
+  return d.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+}
+
 // +5511912345678 → (11) 91234-5678
 export function telefone(whatsapp: string) {
   const d = whatsapp.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
