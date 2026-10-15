@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { liberarContato, type Contato } from "@/app/app/busca/actions";
 import { alternarSalvo } from "@/app/app/salvos/actions";
-import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, experiencia, linkWhatsApp } from "@/lib/formato";
+import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, dataCadastro, experiencia, linkWhatsApp } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
 import type { Candidato } from "@/lib/tipos";
 import { FichaCandidato } from "./ficha-candidato";
@@ -99,6 +99,10 @@ export function CartaoCandidato({ c, empresa, modelo, saldo: saldoInicial, cidad
             <span>
               <Icon name="clock" />
               {c.disponibilidade === "imediata" ? <b className="avail-now">Imediata</b> : `Em ${DISPONIBILIDADES[c.disponibilidade] ?? c.disponibilidade}`}
+            </span>
+            <span title="Data do último cadastro do candidato">
+              <Icon name="history" />
+              Cadastro {dataCadastro(c)}
             </span>
             {c.turno && c.turno !== "qualquer" && <span>{TURNOS[c.turno] ?? c.turno}</span>}
             {c.cnh && <span>CNH {c.cnh}</span>}

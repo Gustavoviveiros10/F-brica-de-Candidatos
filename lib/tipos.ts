@@ -19,6 +19,8 @@ export type PerfilCandidato = {
   cursos: string[] | null;
   tem_cv: boolean;
   atualizado_ha_dias: number;
+  // Dia do último cadastro do candidato nas planilhas (AAAA-MM-DD).
+  cadastrado_em?: string | null;
   // Só o primeiro nome, liberado antes do crédito (primeiros_nomes no banco).
   primeiro_nome?: string | null;
 };

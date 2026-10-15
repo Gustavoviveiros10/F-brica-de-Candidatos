@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, experiencia, reais, telefone } from "@/lib/formato";
+import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, dataCadastro, experiencia, reais, telefone } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
 import type { PerfilCandidato } from "@/lib/tipos";
 
@@ -72,7 +72,7 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
                 <Icon name="flame" />
                 {t.rotulo}
               </span>
-              <span className="chip">Perfil atualizado {atualizado(c.atualizado_ha_dias)}</span>
+              <span className="chip">Cadastro em {dataCadastro(c)} ({atualizado(c.atualizado_ha_dias)})</span>
             </div>
             <h2>{nome || c.funcao}</h2>
             <p className="muted" style={{ marginTop: 6 }}>
