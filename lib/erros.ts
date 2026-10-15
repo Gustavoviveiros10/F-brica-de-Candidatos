@@ -9,6 +9,12 @@ const MENSAGENS: Record<string, string> = {
   CANDIDATO_INDISPONIVEL: "Esse candidato não está mais disponível.",
   SO_ADMIN_DA_EMPRESA: "Só o administrador da empresa pode mudar esses dados.",
   SEM_CREDITOS: "Seus créditos acabaram. Escolha um plano para continuar liberando.",
+  SO_ADMIN: "Só administradores da Fábrica podem fazer isso.",
+  JUSTIFICATIVA_OBRIGATORIA: "Escreva o motivo. Ele aparece no extrato da empresa.",
+  PLANO_INVALIDO: "Esse plano não existe ou está desativado.",
+  STATUS_INVALIDO: "Status inválido.",
+  EMPRESA_NAO_ENCONTRADA: "Empresa não encontrada.",
+  saldo_creditos_check: "O saldo não pode ficar negativo. Tire no máximo o que a empresa tem.",
 };
 
 export function mensagemErro(e: { message?: string } | null | undefined, padrao = "Algo deu errado. Tente de novo.") {

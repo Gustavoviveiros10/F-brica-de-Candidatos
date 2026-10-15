@@ -25,6 +25,14 @@ export const minhaConta = cache(async (): Promise<Conta> => {
   return data as Conta;
 });
 
+// Para o painel /admin: exige login e estar na tabela admins. Quem não é admin volta para o app.
+export async function exigirAdmin() {
+  const conta = await minhaConta();
+  if (!conta.user_id) redirect("/entrar?voltar=/admin");
+  if (!conta.admin) redirect("/app");
+  return conta;
+}
+
 // Para páginas dentro de /app: exige login e empresa vinculada.
 export async function exigirEmpresa() {
   const conta = await minhaConta();

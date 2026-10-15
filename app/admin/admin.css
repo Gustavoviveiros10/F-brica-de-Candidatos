@@ -1,0 +1,131 @@
+/* Painel admin da Fábrica */
+.adm-tag{display:inline-block;margin-top:4px;font:700 10.5px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--on-deep-accent)}
+.adm-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+.adm-kpis .kpi .v small{font:600 14px var(--f-body);color:var(--ink-2);margin-left:6px}
+.adm-delta{display:inline-flex;align-items:center;gap:4px;font-weight:600;color:var(--ok)}
+.adm-delta.neg{color:var(--bad)}
+
+/* Barras de liberações por dia */
+.adm-dias{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;align-items:end;gap:4px;height:120px;padding-top:6px}
+.adm-dias i{display:block;background:var(--brand);border-radius:4px 4px 1px 1px;min-height:3px;opacity:.85;transform-origin:bottom;animation:adm-sobe .6s cubic-bezier(.2,.8,.2,1) both}
+.adm-dias i:hover{opacity:1}
+.adm-dias-eixo{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-3);margin-top:6px}
+@keyframes adm-sobe{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+.adm-busca{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:14px}
+.adm-busca .input{max-width:320px}
+table.t tr.adm-linha{cursor:pointer}
+table.t tr.adm-linha:hover td{background:var(--surface-2)}
+table.t tr.adm-linha[aria-selected="true"] td{background:var(--brand-soft)}
+table.t td.n,table.t th.n{text-align:right;font-variant-numeric:tabular-nums}
+.adm-saldo{display:inline-flex;align-items:center;gap:8px}
+.adm-saldo .usage{width:60px;height:6px}
+.adm-zero{color:var(--bad);font-weight:700}
+
+/* Gaveta da empresa */
+.adm-gaveta .drawer-body{gap:16px}
+.adm-gaveta-top{padding:22px 24px 18px;background:var(--deep);color:var(--on-deep);position:relative}
+.adm-gaveta-top h2{font:800 32px/1 var(--f-display);margin:6px 0 4px}
+.adm-gaveta-top p{color:var(--on-deep-2);font-size:13.5px}
+.adm-gaveta-top .drawer-close{color:var(--ink)}
+.adm-saldo-box{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--surface-2)}
+.adm-saldo-box .big{font:800 40px/1 var(--f-display)}
+.adm-ajuste{display:grid;grid-template-columns:110px minmax(0,1fr) auto;gap:8px;align-items:end}
+.adm-mini-h{font-size:13px;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em}
+
+/* Linha do tempo */
+.adm-feed-cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+.adm-feed{display:flex;flex-direction:column}
+.adm-dia{font-size:12.5px;font-weight:700;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em;padding:14px 0 6px}
+.adm-ev{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);animation:adm-entra .45s ease both}
+.adm-ev .ic{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--brand-soft);color:var(--brand-soft-ink)}
+.adm-ev .ic svg{width:18px;height:18px}
+.adm-ev .ic.ok{background:var(--ok-soft);color:var(--ok)}
+.adm-ev .ic.warn{background:var(--warn-soft);color:var(--warn)}
+.adm-ev b{font-weight:600}
+.adm-ev .quando{font-size:12.5px;color:var(--ink-3);white-space:nowrap}
+.adm-ev .sub{display:block;font-size:13px;color:var(--ink-2)}
+.adm-atencao{display:flex;flex-direction:column;gap:8px}
+.adm-atencao a{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:12px;background:var(--surface-2);text-decoration:none;color:inherit;font-size:14px}
+.adm-atencao a.warn{background:var(--warn-soft);color:var(--warn)}
+.adm-atencao a.ok{background:var(--ok-soft);color:var(--ok)}
+.adm-atencao svg{width:18px;height:18px;flex:none;margin-top:1px}
+@keyframes adm-entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+@media (max-width:1000px){
+  .adm-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .adm-feed-cols{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .adm-ajuste{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .adm-dias i,.adm-ev{animation:none}
+}
+.adm-curta table.t{min-width:0}
+
+/* Filtros em forma de link (mantêm o estado na URL) */
+.adm-chips{display:flex;gap:6px;flex-wrap:wrap}
+.adm-chips a{border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;display:inline-flex;gap:6px;align-items:center;text-decoration:none;transition:background .15s,border-color .15s,color .15s}
+.adm-chips a:hover{border-color:var(--brand);color:var(--ink)}
+.adm-chips a[aria-current="true"]{background:var(--brand-soft);color:var(--brand-soft-ink);border-color:var(--brand)}
+.adm-chips a b{font-variant-numeric:tabular-nums}
+
+a.adm-ev{text-decoration:none;color:inherit;border-radius:10px;transition:background .15s}
+a.adm-ev:hover{background:var(--surface-2)}
+.adm-feed>div:first-child .adm-ev,.adm-dia+.adm-ev{border-top:0}
+.adm-atencao a{animation:adm-entra .45s ease both;transition:transform .15s}
+.adm-atencao a:hover{transform:translateX(3px)}
+.adm-kpi{animation:adm-entra .5s ease both}
+.adm-kpis .adm-kpi:nth-child(2){animation-delay:60ms}
+.adm-kpis .adm-kpi:nth-child(3){animation-delay:120ms}
+.adm-kpis .adm-kpi:nth-child(4){animation-delay:180ms}
+
+table.t tr.adm-linha{position:relative}
+.adm-link-linha{color:inherit;text-decoration:none}
+.adm-link-linha::after{content:"";position:absolute;inset:0}
+.adm-paginas{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 20px;border-top:1px solid var(--line)}
+
+/* Gaveta da empresa (renderizada no servidor a partir de ?id=) */
+.adm-fundo{position:absolute;inset:0}
+.adm-gaveta{position:relative;animation:adm-gaveta .32s cubic-bezier(.2,.8,.2,1) both}
+.overlay.adm-overlay{animation:adm-fade .2s ease both}
+@keyframes adm-gaveta{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+@keyframes adm-fade{from{opacity:0}to{opacity:1}}
+.adm-gaveta .drawer-close{position:absolute;right:12px;top:12px;display:grid;place-items:center}
+.adm-numeros{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.adm-numeros div{padding:10px 12px;border-radius:12px;border:1px solid var(--line)}
+.adm-numeros b{display:block;font:800 26px/1 var(--f-display)}
+.adm-numeros span{font-size:12.5px;color:var(--ink-2)}
+.adm-forms{display:flex;flex-direction:column;gap:12px}
+.adm-forms form{display:flex;flex-direction:column;gap:8px}
+.adm-linha-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.adm-linha-form .select{flex:1;min-width:140px}
+
+/* Demanda */
+.adm-demanda .bar-row{grid-template-columns:minmax(120px,1.4fr) minmax(0,1fr) 44px}
+.adm-demanda .bar-row .track i{animation:adm-cresce .7s cubic-bezier(.2,.8,.2,1) both;transform-origin:left}
+.adm-demanda .bar-row .track.vazia i{background:var(--warn)}
+@keyframes adm-cresce{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+@media (prefers-reduced-motion:reduce){
+  .adm-atencao a,.adm-kpi,.adm-gaveta,.overlay.adm-overlay,.adm-demanda .bar-row .track i{animation:none}
+}
+@media (max-width:560px){
+  .adm-numeros{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .adm-paginas{padding:12px}
+}
+
+/* Listas clicáveis (cada linha abre a ficha da empresa) */
+.list>a{display:flex;justify-content:space-between;gap:12px;padding:11px 8px;margin:0 -8px;border-top:1px solid var(--line);font-size:14.5px;align-items:center;text-decoration:none;color:inherit;border-radius:8px;transition:background .15s}
+.list>a:first-child{border-top:0}
+.list>a:hover{background:var(--surface-2)}
+.adm-lista-anim>*{animation:adm-entra .45s ease both}
+.adm-lista-anim>*:nth-child(2){animation-delay:50ms}
+.adm-lista-anim>*:nth-child(3){animation-delay:100ms}
+.adm-lista-anim>*:nth-child(4){animation-delay:150ms}
+.adm-lista-anim>*:nth-child(5){animation-delay:200ms}
+.adm-lista-anim>*:nth-child(n+6){animation-delay:250ms}
+@media (prefers-reduced-motion:reduce){.adm-lista-anim>*{animation:none}}
+.adm-kpis:has(> :nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:760px){.adm-kpis:has(> :nth-child(3):last-child){grid-template-columns:1fr}}
