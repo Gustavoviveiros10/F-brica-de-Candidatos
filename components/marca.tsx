@@ -1,17 +1,7 @@
-import Link from "next/link";
+import { Logo } from "./logo";
 
 export function Marca() {
-  return (
-    <Link className="brand" href="/" aria-label="Fábrica de Candidatos, ir para o início">
-      <span className="brand-mark">
-        <img src="/img/logo_s.png" alt="" />
-      </span>
-      <span className="brand-text">
-        <span className="brand-name">Fábrica de Candidatos</span>
-        <span className="brand-tag">Talentos sob demanda</span>
-      </span>
-    </Link>
-  );
+  return <Logo />;
 }
 
 export function ArteAuth({ titulo, texto }: { titulo: string; texto: string }) {

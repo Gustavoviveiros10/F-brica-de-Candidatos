@@ -1,9 +1,10 @@
-import Link from "next/link";
 import { exigirEmpresa } from "@/lib/conta";
 import { iniciais } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
 import { supabaseServer } from "@/lib/supabase/server";
+import { Logo } from "@/components/logo";
 import { MenuLateral } from "@/components/menu-lateral";
+import { BotaoTema, SeletorTema } from "@/components/tema";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { empresa } = await exigirEmpresa();
@@ -17,15 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   return (
     <div className="shell">
       <aside className="sidebar">
-        <Link className="side-brand" href="/app">
-          <span className="tile">
-            <img src="/img/logo_s.png" alt="" />
-          </span>
-          <span>
-            <b>Fábrica</b>
-            <small>de Candidatos</small>
-          </span>
-        </Link>
+        <Logo href="/app" className="side-brand" />
         <MenuLateral />
         <div className="side-foot">
           <div className="credit-box">
@@ -37,6 +30,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <i style={{ width: `${pct}%` }} />
             </div>
           </div>
+          <SeletorTema />
           <form action="/sair" method="post">
             <button className="side-link">Sair</button>
           </form>
@@ -50,6 +44,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               {empresa.saldo_creditos} créditos
             </span>
             <span>{empresa.usuario_nome}</span>
+            <BotaoTema />
             <div className="av">{iniciais(empresa.usuario_nome)}</div>
             <form action="/sair" method="post">
               <button className="icon-btn" aria-label="Sair">

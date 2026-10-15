@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SPRITE_SVG } from "@/lib/content/sprite";
+import { TEMA_SCRIPT } from "@/lib/tema";
 import "./globals.css";
 import "./extra.css";
 
@@ -12,8 +13,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: TEMA_SCRIPT }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}

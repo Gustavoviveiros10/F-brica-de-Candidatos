@@ -239,3 +239,48 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .pdemo-tag.ok{background:var(--ok-soft);color:var(--ok)}
 .cta-mock .ficha-curta{width:min(420px,100%);transform:rotate(-2deg);box-shadow:0 40px 80px -24px rgba(0,0,0,.55);border:0}
 @media (max-width:900px){.cta-mock .ficha-curta{transform:none}}
+
+/* Logo: símbolo original sem fundo + nome numa linha. Versão clara do símbolo em fundo escuro. */
+:root{--mk-word:var(--ink);--mk-sub:var(--ink-2);--mk-de:var(--brand)}
+.sidebar .fc-logo,.on-deep .fc-logo{--mk-word:var(--on-deep);--mk-sub:var(--on-deep-2);--mk-de:var(--on-deep-accent)}
+.fc-logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--mk-word);flex:none;min-width:0}
+.fc-mark{position:relative;width:36px;height:44px;flex:none;display:block;transition:transform .35s cubic-bezier(.3,.7,.2,1)}
+.fc-mark img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;animation:fcIn .9s cubic-bezier(.2,.85,.25,1) both}
+.fc-mark .fc-clara{display:none}
+.fc-mark::after{content:"";position:absolute;inset:0;pointer-events:none;
+  -webkit-mask:url(/img/logo-simbolo.webp) center/contain no-repeat;mask:url(/img/logo-simbolo.webp) center/contain no-repeat;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.85) 50%,transparent 65%) no-repeat;background-size:250% 100%;background-position:150% 0;
+  animation:fcBrilho 7s 1.2s ease-in-out infinite}
+.fc-logo:hover .fc-mark{transform:translateY(-2px) rotate(-4deg)}
+.fc-word{display:flex;flex-direction:column;min-width:0;animation:fcWord .9s .25s cubic-bezier(.2,.85,.25,1) both}
+.fc-word b{font:800 22px/1 var(--f-display);letter-spacing:.01em;white-space:nowrap}
+.fc-word b span{color:var(--mk-de);font-weight:700}
+.fc-word small{font:500 11.5px/1 var(--f-body);color:var(--mk-sub);margin-top:5px;white-space:nowrap}
+.sidebar .fc-mark .fc-cor,.on-deep .fc-mark .fc-cor{display:none}
+.sidebar .fc-mark .fc-clara,.on-deep .fc-mark .fc-clara{display:block}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .fc-mark .fc-cor{display:none}:root:not([data-theme="light"]) .fc-mark .fc-clara{display:block}}
+:root[data-theme="dark"] .fc-mark .fc-cor{display:none}
+:root[data-theme="dark"] .fc-mark .fc-clara{display:block}
+@keyframes fcIn{from{opacity:0;transform:translateY(6px) scale(.85) rotate(-8deg)}to{opacity:1;transform:none}}
+@keyframes fcWord{from{opacity:0;clip-path:inset(0 100% 0 0);transform:translateX(-6px)}to{opacity:1;clip-path:inset(0 0 0 0);transform:none}}
+@keyframes fcBrilho{0%,72%{background-position:150% 0}90%,100%{background-position:-50% 0}}
+.sidebar .fc-logo{gap:9px}.sidebar .fc-mark{width:32px;height:40px}.sidebar .fc-word b{font-size:19.5px}
+@media (max-width:480px){.fc-mark{width:28px;height:35px}.fc-word b{font-size:17px}.fc-word small{display:none}.fc-logo{gap:8px}}
+@media (max-width:420px){.site-header .tema-btn{display:none}}
+
+/* Seletor de tema: automático (segue o sistema), claro, escuro */
+.tema-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:3px;border-radius:11px;background:var(--deep-2);border:1px solid var(--deep-line)}
+.tema-seg button{display:flex;align-items:center;justify-content:center;gap:6px;height:30px;border:0;border-radius:8px;background:transparent;color:var(--on-deep-2);font-size:12.5px;font-weight:600;transition:background .2s,color .2s}
+.tema-seg button svg{width:15px;height:15px;flex:none}
+.tema-seg button:hover{color:var(--on-deep)}
+html[data-tema="auto"] .tema-seg [data-tema-set="auto"],html:not([data-tema]) .tema-seg [data-tema-set="auto"],
+html[data-tema="claro"] .tema-seg [data-tema-set="claro"],html[data-tema="escuro"] .tema-seg [data-tema-set="escuro"]{background:var(--on-deep);color:var(--deep)}
+.tema-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);color:var(--ink-2);display:grid;place-items:center;flex:none;padding:0}
+.tema-btn:hover{color:var(--ink);border-color:var(--ink-2)}
+.tema-btn svg{width:18px;height:18px;grid-area:1/1;transition:transform .45s cubic-bezier(.3,.7,.2,1),opacity .3s}
+.tema-btn .i-sol{transform:rotate(-90deg) scale(.4);opacity:0}
+.tema-btn .i-lua{transform:none;opacity:1}
+@media (prefers-color-scheme: dark){html:not([data-theme="light"]) .tema-btn .i-sol{transform:none;opacity:1}html:not([data-theme="light"]) .tema-btn .i-lua{transform:rotate(90deg) scale(.4);opacity:0}}
+html[data-theme="dark"] .tema-btn .i-sol{transform:none;opacity:1}
+html[data-theme="dark"] .tema-btn .i-lua{transform:rotate(90deg) scale(.4);opacity:0}
+.topbar .who .tema-btn{width:36px;height:36px;border-radius:9px}

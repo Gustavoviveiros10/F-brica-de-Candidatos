@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { liberarContato, type Contato } from "@/app/app/busca/actions";
 import { alternarSalvo } from "@/app/app/salvos/actions";
-import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, experiencia, linkWhatsApp } from "@/lib/formato";
+import { DISPONIBILIDADES, TEMPERATURAS, TURNOS, experiencia, linkWhatsApp } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
 import type { Candidato } from "@/lib/tipos";
 import { FichaCandidato } from "./ficha-candidato";
@@ -21,7 +21,6 @@ export function CartaoCandidato({ c, empresa, modelo, saldo: saldoInicial, cidad
   const [pendente, iniciar] = useTransition();
 
   const t = TEMPERATURAS[c.temperatura] ?? TEMPERATURAS.frio;
-  const cat = CATEGORIAS[c.categoria] ?? CATEGORIAS.outros;
 
   useEffect(() => {
     if (!confirmar) return;
@@ -68,9 +67,6 @@ export function CartaoCandidato({ c, empresa, modelo, saldo: saldoInicial, cidad
   return (
     <>
       <div className="cand">
-        <div className="cand-thumb">
-          <img className="art photo" src={cat.foto} alt="" loading="lazy" />
-        </div>
         <div className="cand-main">
           <div className="cand-title">
             {nome ? (
