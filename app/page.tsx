@@ -37,7 +37,12 @@ async function ranking(): Promise<RankingHome | null> {
 
 export default async function Home() {
   const [totais, rank] = await Promise.all([contagens(), ranking()]);
-  const html = HOME_HTML.replace(/\{\{CAT:([a-z]+)\}\}/g, (_, cat: string) =>
+  // Card de função sem nenhum candidato na base sai da home até chegar alguém.
+  const semCandidatos = (cat: string) => Object.keys(totais).length > 0 && !totais[cat];
+  const html = HOME_HTML.replace(
+    /<a class="cat-card" href="\/app\/busca\?categoria=([a-z]+)">[\s\S]*?<\/a>/g,
+    (card, cat: string) => (semCandidatos(cat) ? "" : card),
+  ).replace(/\{\{CAT:([a-z]+)\}\}/g, (_, cat: string) =>
     totais[cat] ? `<span data-count="${totais[cat]}">${totais[cat].toLocaleString("pt-BR")}</span>` : "Novos",
   ).replace("{{RANKING}}", secaoRanking(rank));
   return (
