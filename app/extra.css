@@ -133,3 +133,9 @@ a.vg-kpi:hover{border-color:var(--brand)}
 @media (max-width:560px){
   .vg-etapas{grid-template-columns:1fr}
 }
+
+/* Home: cards de função mostram os cargos de cada área */
+.cat-body{flex-wrap:wrap}
+.cat-body>div:first-child{flex:1;min-width:0}
+.cat-cargos{flex-basis:100%;display:flex;flex-wrap:wrap;gap:6px;margin-top:-2px}
+.cat-cargos .chip{font-size:12px;padding:3px 9px}
