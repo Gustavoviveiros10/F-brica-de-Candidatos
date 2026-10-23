@@ -26,6 +26,7 @@ const ERROS: Record<string, string> = {
   SITUACAO_INVALIDA: "Diga se está trabalhando agora.",
   TURNO_INVALIDO: "Marque pelo menos um turno.",
   CONTRATO_INVALIDO: "Marque pelo menos um tipo de contrato.",
+  CURSO_INVALIDO: "Escreva qual é o seu curso e se está completo ou cursando.",
   AGUARDE: "Seu cadastro acabou de ser enviado. Espere um minuto antes de enviar de novo.",
 };
 

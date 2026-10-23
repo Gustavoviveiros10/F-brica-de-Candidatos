@@ -8,10 +8,15 @@ import {
   AREAS,
   CNHS,
   CONTRATOS,
+  CURSOS_SUPERIORES,
+  CURSOS_TECNICOS,
+  CV_MAX_MB,
+  CV_TIPOS,
   DISPONIBILIDADES,
   ESCOLARIDADES,
   EXPERIENCIAS,
   FUNCOES,
+  FORMACAO_STATUS,
   FUNCAO_OUTRA,
   JA_INDUSTRIA,
   PCD,
@@ -25,6 +30,7 @@ import {
   emailValido,
   mascaraWhatsapp,
   normalizarWhatsapp,
+  pedeCurso,
   perguntasDa,
   respondida,
   semAcento,
@@ -47,6 +53,8 @@ const VAZIO: Rascunho = {
   ja_industria: "",
   segmentos: [],
   escolaridade_nivel: "",
+  formacao_curso: "",
+  formacao_status: "",
   cnh: null,
   disponibilidade: "",
   situacao: "",
@@ -57,6 +65,7 @@ const VAZIO: Rascunho = {
   nome: "",
   whatsapp: "",
   email: "",
+  cv_path: "",
   consentimento: false,
 };
 
@@ -79,6 +88,8 @@ function falta(etapa: number, d: Rascunho, perguntas: PerguntaVaga[], familia?: 
   if (etapa === 2) {
     if (!d.municipio_id) return "Escolha sua cidade na lista.";
     if (!d.escolaridade_nivel) return "Escolha até onde você estudou.";
+    if (pedeCurso(d.escolaridade_nivel) && d.formacao_curso.trim().length < 3) return "Escreva qual é o seu curso.";
+    if (pedeCurso(d.escolaridade_nivel) && !d.formacao_status) return "Diga se o curso está completo ou se você está cursando.";
     if (!ehMotorista(familia) && d.cnh === null) return "Diga se você tem CNH.";
   }
   if (etapa === 3) {
@@ -154,7 +165,14 @@ export function FormCandidato({ funcaoInicial, perguntas: todas, familias }: {
     }
     // Só vão as respostas das perguntas desta função (a pessoa pode ter trocado de função no meio).
     const respostas = Object.fromEntries(perguntas.filter((p) => d.respostas[p.codigo]).map((p) => [p.codigo, d.respostas[p.codigo]]));
-    const dados: DadosCadastro = { ...d, respostas, cnh: ehMotorista(familia) ? "" : (d.cnh ?? "") };
+    const curso = pedeCurso(d.escolaridade_nivel);
+    const dados: DadosCadastro = {
+      ...d,
+      respostas,
+      cnh: ehMotorista(familia) ? "" : (d.cnh ?? ""),
+      formacao_curso: curso ? d.formacao_curso.trim() : "",
+      formacao_status: curso ? d.formacao_status : "",
+    };
     iniciar(async () => {
       const r = await enviarCadastro(dados, captacao.current, armadilha.current?.value ?? "");
       if (!r.ok) return setErro(r.erro);
@@ -446,6 +464,27 @@ function SecaoSobre({ d, mudar, motorista }: Props & { motorista: boolean }) {
       <Pergunta titulo="Até onde você estudou?">
         <Opcoes opcoes={ESCOLARIDADES} valor={d.escolaridade_nivel} onChange={(v) => mudar("escolaridade_nivel", v)} />
       </Pergunta>
+      {pedeCurso(d.escolaridade_nivel) && (
+        <>
+          <Pergunta titulo="Qual curso?" dica="Comece a digitar e escolha, ou escreva o nome do seu curso.">
+            <input
+              className="input lp-input"
+              list="lp-cursos"
+              value={d.formacao_curso}
+              maxLength={80}
+              onChange={(e) => mudar("formacao_curso", e.target.value)}
+              placeholder={d.escolaridade_nivel.startsWith("Técnico") ? "Ex.: Técnico em Mecânica" : "Ex.: Engenharia de Produção"}
+              aria-label="Qual curso"
+            />
+            <datalist id="lp-cursos">
+              {(d.escolaridade_nivel.startsWith("Técnico") ? CURSOS_TECNICOS : CURSOS_SUPERIORES).map((c) => <option key={c} value={c} />)}
+            </datalist>
+          </Pergunta>
+          <Pergunta titulo="O curso está">
+            <Opcoes opcoes={FORMACAO_STATUS} valor={d.formacao_status} onChange={(v) => mudar("formacao_status", v)} />
+          </Pergunta>
+        </>
+      )}
       {!motorista && (
         <Pergunta titulo="Tem CNH?">
           <Opcoes colunas={7} opcoes={CNHS} valor={d.cnh} onChange={(v) => mudar("cnh", v)} />
@@ -500,6 +539,7 @@ function SecaoContato({ d, mudar }: Props) {
       <Pergunta titulo="E-mail (opcional)">
         <input className="input lp-input" type="email" inputMode="email" autoComplete="email" value={d.email} onChange={(e) => mudar("email", e.target.value)} placeholder="seuemail@exemplo.com" />
       </Pergunta>
+      <Curriculo d={d} mudar={mudar} />
       <Pergunta titulo="Você é PcD (pessoa com deficiência)?" dica="Opcional. Muitas fábricas têm vagas reservadas para PcD.">
         <Opcoes opcoes={PCD} valor={d.pcd} onChange={(v) => mudar("pcd", d.pcd === v ? "" : v)} />
       </Pergunta>
@@ -515,6 +555,57 @@ function SecaoContato({ d, mudar }: Props) {
         </span>
       </label>
     </>
+  );
+}
+
+// Envia o arquivo direto para a pasta privada "curriculos/novos/" e guarda só o caminho.
+// O cadastro confere no banco se o arquivo existe antes de ligar ao perfil.
+function Curriculo({ d, mudar }: Props) {
+  const [nome, setNome] = useState("");
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+  const input = useRef<HTMLInputElement>(null);
+
+  async function escolher(arquivo: File | undefined) {
+    setErro(null);
+    if (!arquivo) return;
+    const ext = CV_TIPOS[arquivo.type];
+    if (!ext) return setErro("Envie PDF, Word ou foto (JPG ou PNG).");
+    if (arquivo.size > CV_MAX_MB * 1024 * 1024) return setErro(`O arquivo passa de ${CV_MAX_MB} MB. Tente um PDF ou uma foto menor.`);
+    setEnviando(true);
+    const caminho = `novos/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabaseBrowser().storage.from("curriculos").upload(caminho, arquivo, { contentType: arquivo.type, upsert: false });
+    setEnviando(false);
+    if (error) return setErro("Não deu para enviar o arquivo. Tente de novo.");
+    setNome(arquivo.name);
+    mudar("cv_path", caminho);
+  }
+
+  return (
+    <Pergunta titulo="Currículo (opcional)" dica={`PDF, Word ou foto do currículo, até ${CV_MAX_MB} MB. Só a empresa que liberar seu contato vê.`}>
+      <input
+        ref={input}
+        type="file"
+        accept={Object.keys(CV_TIPOS).join(",")}
+        className="lp-arquivo"
+        onChange={(e) => escolher(e.target.files?.[0])}
+        aria-label="Anexar currículo"
+      />
+      {d.cv_path ? (
+        <div className="lp-cidade-ok">
+          <Icon name="check" />
+          <b>{nome || "Currículo anexado"}</b>
+          <button type="button" className="linklike" onClick={() => { mudar("cv_path", ""); setNome(""); if (input.current) input.current.value = ""; }}>
+            Remover
+          </button>
+        </div>
+      ) : (
+        <button type="button" className="btn btn-secondary btn-block lp-anexar" onClick={() => input.current?.click()} disabled={enviando}>
+          <Icon name="upload" /> {enviando ? "Enviando..." : "Anexar currículo"}
+        </button>
+      )}
+      {erro && <div className="lp-dica lp-dica-erro">{erro}</div>}
+    </Pergunta>
   );
 }
 

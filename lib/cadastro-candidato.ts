@@ -132,6 +132,37 @@ export const ESCOLARIDADES = op([
   "Técnico (cursando ou completo)", "Superior (cursando ou completo)",
 ]);
 
+// Sugestões do "Qual curso?" (a pessoa pode digitar outro).
+export const CURSOS_TECNICOS = [
+  "Técnico em Mecânica", "Técnico em Eletrotécnica", "Técnico em Eletromecânica", "Técnico em Mecatrônica",
+  "Técnico em Automação Industrial", "Técnico em Eletrônica", "Técnico em Logística", "Técnico em Segurança do Trabalho",
+  "Técnico em Qualidade", "Técnico em Química", "Técnico em Plásticos", "Técnico em Metalurgia",
+  "Técnico em Manutenção Automotiva", "Técnico em Refrigeração e Climatização", "Técnico em Administração",
+];
+export const CURSOS_SUPERIORES = [
+  "Engenharia Mecânica", "Engenharia de Produção", "Engenharia Elétrica", "Engenharia de Controle e Automação",
+  "Engenharia Química", "Engenharia de Materiais", "Tecnologia em Logística", "Tecnologia em Processos Metalúrgicos",
+  "Tecnologia em Mecatrônica Industrial", "Tecnologia em Manutenção Industrial", "Gestão da Qualidade", "Gestão da Produção Industrial",
+  "Administração", "Segurança do Trabalho",
+];
+export const FORMACAO_STATUS = [
+  { valor: "completo", rotulo: "Completo" },
+  { valor: "cursando", rotulo: "Cursando" },
+];
+export const pedeCurso = (nivel: string) => nivel.startsWith("Técnico") || nivel.startsWith("Superior");
+
+// Currículo: mesmos tipos e limite da pasta "curriculos" no Supabase.
+export const CV_TIPOS: Record<string, string> = {
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/heic": "heic",
+};
+export const CV_MAX_MB = 5;
+
 export const CNHS = [
   { valor: "", rotulo: "Não tenho" },
   { valor: "A", rotulo: "A" },
@@ -228,6 +259,8 @@ export type DadosCadastro = {
   ja_industria: string;
   segmentos: string[];
   escolaridade_nivel: string;
+  formacao_curso: string;
+  formacao_status: string;
   cnh: string;
   disponibilidade: string;
   situacao: string;
@@ -238,6 +271,7 @@ export type DadosCadastro = {
   nome: string;
   whatsapp: string;
   email: string;
+  cv_path: string;
   consentimento: boolean;
 };
 
