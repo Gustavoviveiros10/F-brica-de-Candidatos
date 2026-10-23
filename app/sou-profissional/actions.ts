@@ -2,6 +2,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import {
   CONSENTIMENTO_VERSAO,
+  FUNCAO_OUTRA,
   acharFuncao,
   emailValido,
   normalizarWhatsapp,
@@ -28,6 +29,7 @@ export async function enviarCadastro(dados: DadosCadastro, captacao: Captacao, a
   const whatsapp = normalizarWhatsapp(dados.whatsapp);
   if (!whatsapp) return { ok: false, erro: ERROS.WHATSAPP_INVALIDO };
   if (!acharFuncao(dados.funcao_id)) return { ok: false, erro: ERROS.FUNCAO_INVALIDA };
+  if (dados.funcao_id === FUNCAO_OUTRA && dados.funcao_informada.trim().length < 3) return { ok: false, erro: "Escreva qual é a sua função." };
   if (!dados.municipio_id) return { ok: false, erro: ERROS.CIDADE_INVALIDA };
   if (dados.nome.trim().length < 3) return { ok: false, erro: ERROS.NOME_INVALIDO };
   if (!emailValido(dados.email.trim())) return { ok: false, erro: ERROS.EMAIL_INVALIDO };

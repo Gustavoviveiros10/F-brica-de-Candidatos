@@ -12,6 +12,9 @@ import {
   ESCOLARIDADES,
   EXPERIENCIAS,
   FUNCOES,
+  FUNCAO_OUTRA,
+  POPULARES,
+  TODAS_FUNCOES,
   PRETENSOES,
   SITUACOES,
   TURNOS,
@@ -20,6 +23,7 @@ import {
   emailValido,
   mascaraWhatsapp,
   normalizarWhatsapp,
+  semAcento,
   type DadosCadastro,
 } from "@/lib/cadastro-candidato";
 import { enviarCadastro, type Captacao } from "./actions";
@@ -35,6 +39,7 @@ type Rascunho = Omit<DadosCadastro, "experiencia_anos" | "escolaridade" | "cnh" 
 
 const VAZIO: Rascunho = {
   funcao_id: 0,
+  funcao_informada: "",
   municipio_id: 0,
   bairro: "",
   experiencia_anos: null,
@@ -59,6 +64,7 @@ const CAMPOS_UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "
 // O que falta em cada etapa (null = pode seguir).
 function falta(etapa: number, d: Rascunho): string | null {
   if (etapa === 0 && !d.funcao_id) return "Escolha sua função.";
+  if (etapa === 0 && d.funcao_id === FUNCAO_OUTRA && d.funcao_informada.trim().length < 3) return "Escreva qual é a sua função.";
   if (etapa === 1 && !d.municipio_id) return "Escolha sua cidade na lista.";
   if (etapa === 2) {
     if (d.experiencia_anos === null) return "Diga quanto tempo de experiência você tem.";
@@ -79,9 +85,8 @@ function falta(etapa: number, d: Rascunho): string | null {
   return null;
 }
 
-export function FormCandidato({ modo, variante, areaInicial }: { modo: "passos" | "pagina"; variante: string; areaInicial?: string }) {
+export function FormCandidato({ modo, variante, funcaoInicial }: { modo: "passos" | "pagina"; variante: string; funcaoInicial?: number }) {
   const [d, setD] = useState<Rascunho>(VAZIO);
-  const [area, setArea] = useState(areaInicial ?? "");
   const [etapa, setEtapa] = useState(0);
   const [erro, setErro] = useState<string | null>(null);
   const [feito, setFeito] = useState<{ nome: string; funcao: string } | null>(null);
@@ -99,8 +104,8 @@ export function FormCandidato({ modo, variante, areaInicial }: { modo: "passos" 
   }, []);
 
   useEffect(() => {
-    if (areaInicial) setArea(areaInicial);
-  }, [areaInicial]);
+    if (funcaoInicial) setD((x) => ({ ...x, funcao_id: funcaoInicial }));
+  }, [funcaoInicial]);
 
   const mudar = <K extends keyof Rascunho>(k: K, v: Rascunho[K]) => {
     setErro(null);
@@ -141,7 +146,7 @@ export function FormCandidato({ modo, variante, areaInicial }: { modo: "passos" 
   if (feito) return <Pronto ref={topo} nome={feito.nome} funcao={feito.funcao} />;
 
   const secoes = [
-    <SecaoFuncao key="f" area={area} setArea={(a) => { setArea(a); mudar("funcao_id", 0); }} d={d} mudar={mudar} grande={variante === "c" && modo === "passos"} />,
+    <SecaoFuncao key="f" d={d} mudar={mudar} />,
     <SecaoCidade key="c" d={d} mudar={mudar} />,
     <SecaoExperiencia key="e" d={d} mudar={mudar} alternar={alternar} funcao={funcao} />,
     <SecaoDisponibilidade key="d" d={d} mudar={mudar} alternar={alternar} />,
@@ -243,39 +248,82 @@ function Pergunta({ titulo, dica, children }: { titulo: string; dica?: string; c
   );
 }
 
-function SecaoFuncao({ area, setArea, d, mudar, grande }: Props & { area: string; setArea: (a: string) => void; grande: boolean }) {
-  const lista = area ? FUNCOES[area] ?? [] : [];
-  const funcoes = useRef<HTMLDivElement>(null);
-  const escolher = (a: string) => {
-    setArea(a);
-    // No celular a lista de funções aparece abaixo das áreas: leva a pessoa até ela.
-    if (window.innerWidth < 900) setTimeout(() => funcoes.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+function SecaoFuncao({ d, mudar }: Props) {
+  const [texto, setTexto] = useState("");
+  const [todas, setTodas] = useState(false);
+  const escolhida = d.funcao_id ? acharFuncao(d.funcao_id) : null;
+  const termo = semAcento(texto.trim());
+  const achadas = termo.length >= 2 ? TODAS_FUNCOES.filter((f) => semAcento(f.nome).includes(termo)).slice(0, 8) : [];
+  const escolher = (id: number) => {
+    mudar("funcao_id", id);
+    setTexto("");
   };
-  return (
-    <>
-      <Pergunta titulo="Em qual área você trabalha?">
-        <div className={grande ? "lp-areas lp-areas-grande" : "lp-areas"}>
-          {AREAS.map((a) => (
-            <button key={a.id} type="button" className="lp-area" aria-pressed={area === a.id} onClick={() => escolher(a.id)}>
-              <img src={a.foto} alt="" />
-              <span>
-                <b>{a.nome}</b>
-                <small>{a.texto}</small>
-              </span>
-            </button>
-          ))}
+
+  if (escolhida && d.funcao_id !== FUNCAO_OUTRA) {
+    return (
+      <Pergunta titulo="Sua função">
+        <div className="lp-cidade-ok">
+          <Icon name="briefcase" />
+          <b>{escolhida.nome}</b>
+          <button type="button" className="linklike" onClick={() => mudar("funcao_id", 0)}>Trocar</button>
         </div>
       </Pergunta>
-      <div ref={funcoes} />
-      {area && (
-        <Pergunta titulo="Qual é a sua função?" dica="Escolha a que você mais quer trabalhar.">
-          <Opcoes
-            opcoes={lista.map((f) => ({ valor: f.id, rotulo: f.nome }))}
-            valor={d.funcao_id || null}
-            onChange={(v) => mudar("funcao_id", v)}
-          />
+    );
+  }
+
+  if (d.funcao_id === FUNCAO_OUTRA) {
+    return (
+      <Pergunta titulo="Qual é a sua função?" dica="Escreva do jeito que aparece na carteira ou nas vagas.">
+        <input
+          className="input lp-input"
+          value={d.funcao_informada}
+          maxLength={80}
+          onChange={(e) => mudar("funcao_informada", e.target.value)}
+          placeholder="Ex.: Operador de Rosqueadeira"
+          autoFocus
+        />
+        <button type="button" className="linklike lp-link" onClick={() => mudar("funcao_id", 0)}>Voltar para a lista</button>
+      </Pergunta>
+    );
+  }
+
+  return (
+    <>
+      <Pergunta titulo="Qual é a sua função?" dica="Digite e escolha na lista. Se trabalha em mais de uma, escolha a que mais quer.">
+        <input
+          className="input lp-input"
+          value={texto}
+          onChange={(e) => setTexto(e.target.value)}
+          placeholder="Ex.: soldador, empilhadeira, CNC"
+          aria-label="Buscar função"
+        />
+        {achadas.length > 0 && (
+          <ul className="lp-sugestoes">
+            {achadas.map((f) => (
+              <li key={f.id}>
+                <button type="button" onClick={() => escolher(f.id)}>{f.nome}</button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {termo.length >= 2 && achadas.length === 0 && <div className="lp-dica">Não achamos essa função. Tente outro nome ou use o link abaixo.</div>}
+      </Pergunta>
+      {termo.length < 2 && (
+        <Pergunta titulo="Mais procuradas pelas fábricas do ABC">
+          <Opcoes opcoes={POPULARES.map((id) => ({ valor: id, rotulo: acharFuncao(id)?.nome ?? "" }))} valor={null} onChange={escolher} />
         </Pergunta>
       )}
+      <div className="lp-links">
+        <button type="button" className="linklike" onClick={() => setTodas(!todas)}>
+          {todas ? "Esconder a lista completa" : `Ver todas as ${TODAS_FUNCOES.length} funções`}
+        </button>
+        <button type="button" className="linklike" onClick={() => mudar("funcao_id", FUNCAO_OUTRA)}>Não achei minha função</button>
+      </div>
+      {todas && AREAS.map((a) => (
+        <Pergunta key={a.id} titulo={a.nome}>
+          <Opcoes opcoes={FUNCOES[a.id].map((f) => ({ valor: f.id, rotulo: f.nome }))} valor={null} onChange={escolher} />
+        </Pergunta>
+      ))}
     </>
   );
 }

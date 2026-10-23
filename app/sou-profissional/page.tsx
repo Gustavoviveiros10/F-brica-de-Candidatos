@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Marca } from "@/components/marca";
 import { PixelMeta } from "@/components/pixel-meta";
 import { Icon } from "@/lib/icons-component";
-import { AREAS } from "@/lib/cadastro-candidato";
+import { acharFuncao } from "@/lib/cadastro-candidato";
+
+const FOTOS = ["foto-line", "foto-truck", "foto-forklift", "foto-maint", "foto-tool", "foto-weld"];
 import { FormCandidato } from "./form";
 import "./landing.css";
 
@@ -11,11 +13,12 @@ export const metadata = {
   description: "Cadastre seu perfil grátis em 2 minutos e seja chamado no WhatsApp pelas indústrias da sua região.",
 };
 
-// ?v=a|b|c escolhe o layout (opções em avaliação). ?area=solda já abre com a área marcada (útil por anúncio).
-export default async function SouProfissional({ searchParams }: { searchParams: Promise<{ v?: string; area?: string }> }) {
+// ?v=a|b escolhe o layout (opções em avaliação). ?funcao=9 já abre com a função marcada (útil num anúncio por cargo).
+export default async function SouProfissional({ searchParams }: { searchParams: Promise<{ v?: string; funcao?: string }> }) {
   const q = await searchParams;
-  const v = q.v === "b" || q.v === "c" ? q.v : "a";
-  const area = AREAS.some((a) => a.id === q.area) ? q.area : undefined;
+  const v = q.v === "b" ? "b" : "a";
+  const id = Number(q.funcao);
+  const funcao = id && acharFuncao(id) ? id : undefined;
 
   return (
     <div className={`lp lp-${v}`}>
@@ -36,7 +39,7 @@ export default async function SouProfissional({ searchParams }: { searchParams: 
               <p>Cadastre seu perfil grátis. Quando uma empresa se interessar, ela te chama direto no WhatsApp.</p>
               <Beneficios />
             </div>
-            <FormCandidato modo="passos" variante="a" areaInicial={area} />
+            <FormCandidato modo="passos" variante="a" funcaoInicial={funcao} />
           </div>
         </section>
       )}
@@ -49,28 +52,15 @@ export default async function SouProfissional({ searchParams }: { searchParams: 
               <h1 className="display">Empresas da indústria estão procurando gente como você.</h1>
               <p>Preencha uma vez e apareça para as empresas da sua região. Leva 2 minutos.</p>
               <div className="lp-fotos">
-                {AREAS.map((a) => <img key={a.id} src={a.foto} alt={a.nome} />)}
+                {FOTOS.map((f) => <img key={f} src={`/img/${f}.jpg`} alt="" />)}
               </div>
               <Beneficios />
             </div>
           </section>
           <section className="wrap lp-corpo-b">
-            <FormCandidato modo="pagina" variante="b" areaInicial={area} />
+            <FormCandidato modo="pagina" variante="b" funcaoInicial={funcao} />
           </section>
         </>
-      )}
-
-      {v === "c" && (
-        <section className="lp-hero-c">
-          <div className="wrap">
-            <div className="lp-copy-c">
-              <span className="lp-eyebrow">Cadastro grátis em 2 minutos</span>
-              <h1 className="display">Qual é a sua área?</h1>
-              <p>Toque na sua área e monte seu perfil. As empresas da sua região te chamam no WhatsApp.</p>
-            </div>
-            <FormCandidato modo="passos" variante="c" areaInicial={area} />
-          </div>
-        </section>
       )}
 
       <section className="wrap lp-como">

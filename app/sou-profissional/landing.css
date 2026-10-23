@@ -24,11 +24,6 @@
 .lp-fotos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}
 .lp-corpo-b{max-width:760px;padding-block:24px 8px}
 
-/* C · Comece pela área */
-.lp-hero-c{padding:32px 0 40px;background:linear-gradient(var(--brand-soft),var(--bg) 320px)}
-.lp-copy-c{text-align:center;max-width:640px;margin:0 auto 20px}
-.lp-copy-c p{color:var(--ink-2);font-size:18px}
-.lp-hero-c .lp-form{max-width:860px;margin:0 auto}
 
 /* Formulário */
 .lp-form{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
@@ -45,7 +40,7 @@
 .lp-pergunta{margin-top:20px}
 .lp-pergunta-titulo{font-weight:700;font-size:16.5px}
 .lp-dica{font-size:14px;color:var(--ink-3);margin-top:3px}
-.lp-pergunta>.lp-ops,.lp-pergunta>.lp-areas,.lp-pergunta>.lp-input,.lp-pergunta>.lp-cidade,.lp-pergunta>.lp-cidade-ok{margin-top:10px}
+.lp-pergunta>.lp-ops,.lp-pergunta>.lp-input,.lp-pergunta>.lp-cidade,.lp-pergunta>.lp-cidade-ok{margin-top:10px}
 .lp-input{min-height:52px;font-size:16px}
 .lp-ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .lp-op{display:flex;align-items:center;gap:10px;min-height:50px;padding:10px 14px;text-align:left;border:1.5px solid var(--line-2);border-radius:12px;background:var(--surface);color:var(--ink);font:600 15px/1.2 var(--f-body);cursor:pointer}
@@ -55,19 +50,8 @@
 .lp-caixa{display:grid;place-items:center;width:20px;height:20px;flex:none;border:1.5px solid var(--line-2);border-radius:6px;background:var(--surface)}
 .lp-op[aria-checked="true"] .lp-caixa{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
 .lp-caixa svg{width:14px;height:14px;stroke-width:3}
-.lp-areas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.lp-area{display:flex;align-items:center;gap:10px;padding:8px;text-align:left;border:1.5px solid var(--line-2);border-radius:12px;background:var(--surface);color:var(--ink);cursor:pointer}
-.lp-area img{width:52px;height:52px;border-radius:9px;object-fit:cover;flex:none}
-.lp-area b{display:block;font-size:14.5px;line-height:1.15}
-.lp-area small{display:block;font-size:12.5px;color:var(--ink-3);margin-top:2px;line-height:1.2}
-.lp-area[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
-.lp-areas-grande{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.lp-areas-grande .lp-area{flex-direction:column;align-items:stretch;padding:0;overflow:hidden}
-.lp-areas-grande .lp-area img{width:100%;height:auto;aspect-ratio:4/3;border-radius:0}
-.lp-areas-grande .lp-area span{padding:10px 12px 12px}
-.lp-areas-grande .lp-area b{font-size:16px}
 .lp-cidade{position:relative}
-.lp-sugestoes{list-style:none;margin-top:6px;border:1px solid var(--line-2);border-radius:12px;overflow:hidden;background:var(--surface)}
+.lp-sugestoes{list-style:none;padding:0;margin-top:6px;border:1px solid var(--line-2);border-radius:12px;overflow:hidden;background:var(--surface)}
 .lp-sugestoes button{display:block;width:100%;min-height:48px;padding:0 14px;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font:600 15.5px var(--f-body);cursor:pointer}
 .lp-sugestoes li:last-child button{border-bottom:0}
 .lp-sugestoes button:hover{background:var(--surface-2)}
@@ -118,15 +102,14 @@
   .lp h1{font-size:34px;margin:6px 0 10px}
   .lp-hero-a{padding:18px 0 24px}
   .lp-hero-a .lp-beneficios{margin-top:12px;font-size:14px;gap:6px 14px}
-  .lp-hero-a p,.lp-hero-b p,.lp-copy-c p{font-size:16.5px}
+  .lp-hero-a p,.lp-hero-b p{font-size:16.5px}
   .lp-form{padding:18px 16px;border-radius:16px}
+  .lp-form-pagina{padding:0}
   .lp-secao{padding:18px 16px}
   .lp-form-pagina>.lp-erro,.lp-form-pagina>.btn{margin:0 16px 18px;width:calc(100% - 32px)}
-  .lp-areas{grid-template-columns:minmax(0,1fr)}
-  .lp-areas-grande{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .lp-areas-grande .lp-area b{font-size:14.5px}
-  .lp-areas-grande .lp-area small{display:none}
   .lp-ops{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lp-ops[style]{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .lp-header .btn{padding:0 10px}
 }
+.lp-links{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;font-size:15px}
+.lp-link{display:inline-block;margin-top:10px}
