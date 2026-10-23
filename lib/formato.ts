@@ -25,6 +25,7 @@ export const TURNOS: Record<string, string> = {
   "2_turno": "2º turno",
   "3_turno": "3º turno",
   comercial: "Comercial",
+  "12x36": "Escala 12x36",
   qualquer: "Qualquer turno",
 };
 
