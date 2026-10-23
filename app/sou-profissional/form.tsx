@@ -13,68 +13,79 @@ import {
   EXPERIENCIAS,
   FUNCOES,
   FUNCAO_OUTRA,
+  JA_INDUSTRIA,
+  PCD,
   POPULARES,
-  TODAS_FUNCOES,
   PRETENSOES,
+  SEGMENTOS,
   SITUACOES,
+  TODAS_FUNCOES,
   TURNOS,
   acharFuncao,
-  cursosDa,
   emailValido,
   mascaraWhatsapp,
   normalizarWhatsapp,
+  perguntasDa,
+  respondida,
   semAcento,
   type DadosCadastro,
+  type PerguntaVaga,
+  type Resposta,
 } from "@/lib/cadastro-candidato";
 import { enviarCadastro, type Captacao } from "./actions";
 
 type Cidade = { id: number; nome: string; uf: string };
-type Rascunho = Omit<DadosCadastro, "experiencia_anos" | "escolaridade" | "cnh" | "disponibilidade" | "situacao"> & {
-  experiencia_anos: number | null;
-  escolaridade: string | null;
-  cnh: string | null;
-  disponibilidade: string | null;
-  situacao: string | null;
-};
+type Rascunho = Omit<DadosCadastro, "cnh"> & { cnh: string | null };
 
 const VAZIO: Rascunho = {
   funcao_id: 0,
   funcao_informada: "",
   municipio_id: 0,
   bairro: "",
-  experiencia_anos: null,
-  escolaridade: null,
+  experiencia_faixa: "",
+  respostas: {},
+  ja_industria: "",
+  segmentos: [],
+  escolaridade_nivel: "",
   cnh: null,
-  habilidades: [],
-  cursos: [],
-  disponibilidade: null,
-  turno: "qualquer",
-  contratos: ["CLT"],
-  situacao: null,
+  disponibilidade: "",
+  situacao: "",
+  turnos: [],
+  contratos: [],
   pretensao_salarial: 0,
+  pcd: "",
   nome: "",
   whatsapp: "",
   email: "",
   consentimento: false,
 };
 
-const ETAPAS = ["Sua função", "Onde você mora", "Sua experiência", "Quando pode começar", "Seu contato"];
+const ETAPAS = ["Sua função", "Sua experiência", "Sobre você", "Quando pode começar", "Seu contato"];
 const CAMPOS_UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid"] as const;
 
+// Motorista responde a categoria da CNH nas perguntas da vaga.
+const ehMotorista = (familia?: string) => familia === "motoristas";
+
 // O que falta em cada etapa (null = pode seguir).
-function falta(etapa: number, d: Rascunho): string | null {
+function falta(etapa: number, d: Rascunho, perguntas: PerguntaVaga[], familia?: string): string | null {
   if (etapa === 0 && !d.funcao_id) return "Escolha sua função.";
   if (etapa === 0 && d.funcao_id === FUNCAO_OUTRA && d.funcao_informada.trim().length < 3) return "Escreva qual é a sua função.";
-  if (etapa === 1 && !d.municipio_id) return "Escolha sua cidade na lista.";
+  if (etapa === 1) {
+    if (!d.experiencia_faixa) return "Diga quanto tempo de experiência você tem.";
+    const p = perguntas.find((q) => q.obrigatoria && !respondida(q, d.respostas[q.codigo]));
+    if (p) return `Responda: ${p.texto}`;
+    if (!d.ja_industria) return "Diga se já trabalhou em indústria.";
+  }
   if (etapa === 2) {
-    if (d.experiencia_anos === null) return "Diga quanto tempo de experiência você tem.";
-    if (!d.escolaridade) return "Escolha até onde você estudou.";
-    if (d.cnh === null) return "Diga se você tem CNH.";
+    if (!d.municipio_id) return "Escolha sua cidade na lista.";
+    if (!d.escolaridade_nivel) return "Escolha até onde você estudou.";
+    if (!ehMotorista(familia) && d.cnh === null) return "Diga se você tem CNH.";
   }
   if (etapa === 3) {
     if (!d.disponibilidade) return "Diga quando você pode começar.";
     if (!d.situacao) return "Diga se está trabalhando agora.";
-    if (!d.contratos.length) return "Escolha pelo menos um tipo de contrato.";
+    if (!d.turnos.length) return "Marque pelo menos um turno.";
+    if (!d.contratos.length) return "Marque pelo menos um tipo de contrato.";
   }
   if (etapa === 4) {
     if (d.nome.trim().split(/\s+/).length < 2) return "Escreva seu nome e sobrenome.";
@@ -85,7 +96,11 @@ function falta(etapa: number, d: Rascunho): string | null {
   return null;
 }
 
-export function FormCandidato({ funcaoInicial }: { funcaoInicial?: number }) {
+export function FormCandidato({ funcaoInicial, perguntas: todas, familias }: {
+  funcaoInicial?: number;
+  perguntas: PerguntaVaga[];
+  familias: Record<number, string>;
+}) {
   const [d, setD] = useState<Rascunho>(VAZIO);
   const [etapa, setEtapa] = useState(0);
   const [erro, setErro] = useState<string | null>(null);
@@ -111,14 +126,17 @@ export function FormCandidato({ funcaoInicial }: { funcaoInicial?: number }) {
     setErro(null);
     setD((x) => ({ ...x, [k]: v }));
   };
-  const alternar = (k: "habilidades" | "cursos" | "contratos", v: string) =>
+  const alternar = (k: "segmentos" | "turnos" | "contratos", v: string) =>
     mudar(k, d[k].includes(v) ? d[k].filter((x) => x !== v) : [...d[k], v]);
+  const responder = (codigo: string, r: Resposta) => mudar("respostas", { ...d.respostas, [codigo]: r });
 
   const funcao = d.funcao_id ? acharFuncao(d.funcao_id) : null;
+  const familia = familias[d.funcao_id];
+  const perguntas = perguntasDa(d.funcao_id, familia, todas);
   const rolarTopo = () => topo.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   function avancar() {
-    const f = falta(etapa, d);
+    const f = falta(etapa, d, perguntas, familia);
     if (f) return setErro(f);
     if (etapa === 0) eventoMeta("ViewContent", { content_category: funcao?.nome });
     setEtapa(etapa + 1);
@@ -127,15 +145,18 @@ export function FormCandidato({ funcaoInicial }: { funcaoInicial?: number }) {
 
   function enviar() {
     for (let i = 0; i < ETAPAS.length; i++) {
-      const f = falta(i, d);
+      const f = falta(i, d, perguntas, familia);
       if (f) {
         setErro(f);
         setEtapa(i);
         return;
       }
     }
+    // Só vão as respostas das perguntas desta função (a pessoa pode ter trocado de função no meio).
+    const respostas = Object.fromEntries(perguntas.filter((p) => d.respostas[p.codigo]).map((p) => [p.codigo, d.respostas[p.codigo]]));
+    const dados: DadosCadastro = { ...d, respostas, cnh: ehMotorista(familia) ? "" : (d.cnh ?? "") };
     iniciar(async () => {
-      const r = await enviarCadastro(d as DadosCadastro, captacao.current, armadilha.current?.value ?? "");
+      const r = await enviarCadastro(dados, captacao.current, armadilha.current?.value ?? "");
       if (!r.ok) return setErro(r.erro);
       eventoMeta("Lead", { content_category: r.funcao || funcao?.nome });
       setFeito({ nome: d.nome.trim().split(/\s+/)[0], funcao: r.funcao || funcao?.nome || "" });
@@ -145,10 +166,11 @@ export function FormCandidato({ funcaoInicial }: { funcaoInicial?: number }) {
 
   if (feito) return <Pronto ref={topo} nome={feito.nome} funcao={feito.funcao} />;
 
+  const nomeFuncao = d.funcao_id === FUNCAO_OUTRA ? d.funcao_informada.trim() : funcao?.nome;
   const secoes = [
     <SecaoFuncao key="f" d={d} mudar={mudar} />,
-    <SecaoCidade key="c" d={d} mudar={mudar} />,
-    <SecaoExperiencia key="e" d={d} mudar={mudar} alternar={alternar} funcao={funcao} />,
+    <SecaoExperiencia key="e" d={d} mudar={mudar} alternar={alternar} responder={responder} perguntas={perguntas} nomeFuncao={nomeFuncao} />,
+    <SecaoSobre key="s" d={d} mudar={mudar} motorista={ehMotorista(familia)} />,
     <SecaoDisponibilidade key="d" d={d} mudar={mudar} alternar={alternar} />,
     <SecaoContato key="ct" d={d} mudar={mudar} />,
   ];
@@ -211,14 +233,15 @@ function Opcoes<T extends string | number>({ opcoes, valor, onChange, multi, col
           onClick={() => onChange(o.valor)}
         >
           {multi && <span className="lp-caixa">{marcado(o.valor) && <Icon name="check" />}</span>}
-          {o.rotulo}
+          {/* Deixa quebrar a linha depois da barra ("Plástico/borracha") em vez de no meio da palavra. */}
+          {o.rotulo.replaceAll("/", "/\u200b")}
         </button>
       ))}
     </div>
   );
 }
 
-function Pergunta({ titulo, dica, children }: { titulo: string; dica?: string; children: React.ReactNode }) {
+function Pergunta({ titulo, dica, children }: { titulo: string; dica?: string | null; children: React.ReactNode }) {
   return (
     <div className="lp-pergunta">
       <div className="lp-pergunta-titulo">{titulo}</div>
@@ -370,45 +393,81 @@ function SecaoCidade({ d, mudar }: Props) {
   );
 }
 
-function SecaoExperiencia({ d, mudar, alternar, funcao }: Props & { alternar: (k: "habilidades" | "cursos", v: string) => void; funcao: ReturnType<typeof acharFuncao> }) {
+function PerguntaDaVaga({ p, r, responder }: { p: PerguntaVaga; r: Resposta | undefined; responder: (codigo: string, r: Resposta) => void }) {
+  const opcoes = p.opcoes.map((o) => ({ valor: o, rotulo: o }));
+  if (p.tipo === "uma") {
+    return (
+      <Pergunta titulo={p.texto} dica={p.dica}>
+        <Opcoes opcoes={opcoes} valor={typeof r === "string" ? r : null} onChange={(v) => responder(p.codigo, v)} />
+      </Pergunta>
+    );
+  }
+  const marcadas = Array.isArray(r) ? r : [];
+  const alternar = (v: string) => {
+    if (v === p.opcao_nenhuma) return responder(p.codigo, marcadas.includes(v) ? [] : [v]);
+    const sem = marcadas.filter((x) => x !== p.opcao_nenhuma);
+    responder(p.codigo, sem.includes(v) ? sem.filter((x) => x !== v) : [...sem, v]);
+  };
+  return (
+    <Pergunta titulo={p.texto} dica={p.dica ?? "Pode marcar mais de um."}>
+      <Opcoes multi opcoes={opcoes} valor={marcadas} onChange={alternar} />
+    </Pergunta>
+  );
+}
+
+function SecaoExperiencia({ d, mudar, alternar, responder, perguntas, nomeFuncao }: Props & {
+  alternar: (k: "segmentos", v: string) => void;
+  responder: (codigo: string, r: Resposta) => void;
+  perguntas: PerguntaVaga[];
+  nomeFuncao?: string;
+}) {
   return (
     <>
-      <Pergunta titulo={funcao ? `Quanto tempo de experiência como ${funcao.nome}?` : "Quanto tempo de experiência na função?"}>
-        <Opcoes opcoes={EXPERIENCIAS} valor={d.experiencia_anos} onChange={(v) => mudar("experiencia_anos", v)} />
+      <Pergunta titulo={nomeFuncao ? `Quanto tempo de experiência como ${nomeFuncao}?` : "Quanto tempo de experiência na função?"} dica="Contando com e sem carteira assinada.">
+        <Opcoes opcoes={EXPERIENCIAS} valor={d.experiencia_faixa} onChange={(v) => mudar("experiencia_faixa", v)} />
       </Pergunta>
-      {funcao && funcao.habilidades.length > 0 && (
-        <Pergunta titulo="Com o que você já trabalhou?" dica="Marque tudo que você sabe fazer.">
-          <Opcoes multi opcoes={funcao.habilidades.map((h) => ({ valor: h, rotulo: h }))} valor={d.habilidades} onChange={(v) => alternar("habilidades", v)} />
-        </Pergunta>
-      )}
-      {funcao && (
-        <Pergunta titulo="Quais cursos você tem?" dica="Só os que você tem certificado. Pode pular se não tiver.">
-          <Opcoes multi opcoes={cursosDa(funcao).map((c) => ({ valor: c, rotulo: c }))} valor={d.cursos} onChange={(v) => alternar("cursos", v)} />
-        </Pergunta>
-      )}
-      <Pergunta titulo="Até onde você estudou?">
-        <Opcoes opcoes={ESCOLARIDADES} valor={d.escolaridade} onChange={(v) => mudar("escolaridade", v)} />
+      {perguntas.map((p) => (
+        <PerguntaDaVaga key={p.codigo} p={p} r={d.respostas[p.codigo]} responder={responder} />
+      ))}
+      <Pergunta titulo="Já trabalhou em indústria?">
+        <Opcoes opcoes={JA_INDUSTRIA} valor={d.ja_industria} onChange={(v) => mudar("ja_industria", v)} />
       </Pergunta>
-      <Pergunta titulo="Tem CNH?">
-        <Opcoes colunas={7} opcoes={CNHS} valor={d.cnh} onChange={(v) => mudar("cnh", v)} />
+      <Pergunta titulo="Em que tipo de empresa já trabalhou?" dica="Opcional. Pode marcar mais de um.">
+        <Opcoes multi opcoes={SEGMENTOS} valor={d.segmentos} onChange={(v) => alternar("segmentos", v)} />
       </Pergunta>
     </>
   );
 }
 
-function SecaoDisponibilidade({ d, mudar, alternar }: Props & { alternar: (k: "contratos", v: string) => void }) {
+function SecaoSobre({ d, mudar, motorista }: Props & { motorista: boolean }) {
+  return (
+    <>
+      <SecaoCidade d={d} mudar={mudar} />
+      <Pergunta titulo="Até onde você estudou?">
+        <Opcoes opcoes={ESCOLARIDADES} valor={d.escolaridade_nivel} onChange={(v) => mudar("escolaridade_nivel", v)} />
+      </Pergunta>
+      {!motorista && (
+        <Pergunta titulo="Tem CNH?">
+          <Opcoes colunas={7} opcoes={CNHS} valor={d.cnh} onChange={(v) => mudar("cnh", v)} />
+        </Pergunta>
+      )}
+    </>
+  );
+}
+
+function SecaoDisponibilidade({ d, mudar, alternar }: Props & { alternar: (k: "turnos" | "contratos", v: string) => void }) {
   return (
     <>
       <Pergunta titulo="Quando você pode começar?">
         <Opcoes opcoes={DISPONIBILIDADES} valor={d.disponibilidade} onChange={(v) => mudar("disponibilidade", v)} />
       </Pergunta>
-      <Pergunta titulo="Você está trabalhando agora?">
+      <Pergunta titulo="Está trabalhando agora?">
         <Opcoes opcoes={SITUACOES} valor={d.situacao} onChange={(v) => mudar("situacao", v)} />
       </Pergunta>
-      <Pergunta titulo="Qual turno você prefere?">
-        <Opcoes opcoes={TURNOS} valor={d.turno} onChange={(v) => mudar("turno", v)} />
+      <Pergunta titulo="Quais turnos você aceita?" dica="Marque todos que dá pra você.">
+        <Opcoes multi opcoes={TURNOS} valor={d.turnos} onChange={(v) => alternar("turnos", v)} />
       </Pergunta>
-      <Pergunta titulo="Aceita qual tipo de contrato?" dica="Pode marcar mais de um.">
+      <Pergunta titulo="Aceita trabalhar como?" dica="Pode marcar mais de um.">
         <Opcoes multi opcoes={CONTRATOS} valor={d.contratos} onChange={(v) => alternar("contratos", v)} />
       </Pergunta>
       <Pergunta titulo="Quanto você quer ganhar por mês?" dica="Salário bruto, sem benefícios.">
@@ -440,6 +499,9 @@ function SecaoContato({ d, mudar }: Props) {
       </Pergunta>
       <Pergunta titulo="E-mail (opcional)">
         <input className="input lp-input" type="email" inputMode="email" autoComplete="email" value={d.email} onChange={(e) => mudar("email", e.target.value)} placeholder="seuemail@exemplo.com" />
+      </Pergunta>
+      <Pergunta titulo="Você é PcD (pessoa com deficiência)?" dica="Opcional. Muitas fábricas têm vagas reservadas para PcD.">
+        <Opcoes opcoes={PCD} valor={d.pcd} onChange={(v) => mudar("pcd", d.pcd === v ? "" : v)} />
       </Pergunta>
       <div className="lp-protecao">
         <Icon name="lock" />

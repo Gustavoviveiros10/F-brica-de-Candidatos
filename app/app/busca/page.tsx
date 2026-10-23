@@ -15,7 +15,7 @@ const RAIOS = [10, 20, 30, 50, 80, 150];
 const EXPERIENCIAS = [1, 2, 3, 5, 8];
 const TURNOS_FILTRO = Object.fromEntries(Object.entries(TURNOS).filter(([k]) => k !== "qualquer"));
 const ESCOLARIDADES = ["Ensino fundamental", "Ensino médio completo", "Técnico", "Superior"];
-const CONTRATOS = ["CLT", "PJ", "Temporário"];
+const CONTRATOS = ["CLT", "PJ", "Temporário", "Terceirizado"];
 
 type Opcoes = {
   cidades: { id: number; nome: string; uf: string; total: number }[];

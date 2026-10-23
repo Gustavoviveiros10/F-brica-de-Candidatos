@@ -19,6 +19,13 @@ const ERROS: Record<string, string> = {
   FUNCAO_INVALIDA: "Escolha sua função na lista.",
   CIDADE_INVALIDA: "Escolha sua cidade na lista.",
   SEM_CONSENTIMENTO: "Para continuar, marque que concorda em compartilhar seu perfil.",
+  RESPOSTAS_INCOMPLETAS: "Faltou responder alguma pergunta da sua experiência. Volte e confira.",
+  EXPERIENCIA_INVALIDA: "Diga quanto tempo de experiência você tem.",
+  ESCOLARIDADE_INVALIDA: "Escolha até onde você estudou.",
+  DISPONIBILIDADE_INVALIDA: "Diga quando você pode começar.",
+  SITUACAO_INVALIDA: "Diga se está trabalhando agora.",
+  TURNO_INVALIDO: "Marque pelo menos um turno.",
+  CONTRATO_INVALIDO: "Marque pelo menos um tipo de contrato.",
   AGUARDE: "Seu cadastro acabou de ser enviado. Espere um minuto antes de enviar de novo.",
 };
 

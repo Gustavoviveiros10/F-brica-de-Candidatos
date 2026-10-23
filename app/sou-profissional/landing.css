@@ -32,7 +32,7 @@
 .lp-pergunta>.lp-ops,.lp-pergunta>.lp-input,.lp-pergunta>.lp-cidade,.lp-pergunta>.lp-cidade-ok{margin-top:10px}
 .lp-input{min-height:52px;font-size:16px}
 .lp-ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
-.lp-op{display:flex;align-items:center;gap:10px;min-height:50px;padding:10px 14px;text-align:left;border:1.5px solid var(--line-2);border-radius:12px;background:var(--surface);color:var(--ink);font:600 15px/1.2 var(--f-body);cursor:pointer}
+.lp-op{display:flex;align-items:center;gap:10px;min-width:0;overflow-wrap:anywhere;hyphens:auto;min-height:50px;padding:10px 14px;text-align:left;border:1.5px solid var(--line-2);border-radius:12px;background:var(--surface);color:var(--ink);font:600 15px/1.2 var(--f-body);cursor:pointer}
 .lp-op:hover{border-color:var(--brand)}
 .lp-op[aria-checked="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand-soft-ink)}
 .lp-op[role="radio"]{justify-content:center;text-align:center}

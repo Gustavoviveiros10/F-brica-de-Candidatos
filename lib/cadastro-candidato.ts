@@ -105,13 +105,6 @@ export const FUNCAO_OUTRA = 140;
 // Atalhos na tela: as funções que as fábricas do ABC mais procuram.
 export const POPULARES = [29, 23, 105, 1, 22, 106, 9, 12, 13, 5, 27, 119, 120, 19, 3, 6];
 
-// Cursos que qualquer função pode marcar, além dos sugeridos da função.
-export const CURSOS_GERAIS = ["NR-10", "NR-11", "NR-12", "NR-33", "NR-35", "Operador de Empilhadeira"];
-
-export function cursosDa(f: FuncaoCadastro) {
-  return [...new Set([...f.cursos, ...CURSOS_GERAIS])];
-}
-
 export function acharFuncao(id: number) {
   if (id === FUNCAO_OUTRA) return { area: "outros", id, nome: "Outra função", habilidades: [] as string[], cursos: [] as string[] };
   for (const [area, lista] of Object.entries(FUNCOES)) {
@@ -121,21 +114,23 @@ export function acharFuncao(id: number) {
   return null;
 }
 
-export const EXPERIENCIAS = [
-  { valor: 0, rotulo: "Ainda não tenho" },
-  { valor: 1, rotulo: "Menos de 2 anos" },
-  { valor: 2, rotulo: "2 a 4 anos" },
-  { valor: 5, rotulo: "5 a 9 anos" },
-  { valor: 10, rotulo: "10 anos ou mais" },
-];
+// Bloco comum (todas as vagas). Os textos são os valores gravados; o banco
+// converte faixa de experiência e escolaridade nos valores que a busca filtra.
+const op = (lista: string[]) => lista.map((v) => ({ valor: v, rotulo: v }));
 
-// Mesmos textos do filtro "Formação" da busca.
-export const ESCOLARIDADES = [
-  { valor: "Ensino fundamental", rotulo: "Fundamental (ou médio incompleto)" },
-  { valor: "Ensino médio completo", rotulo: "Médio completo" },
-  { valor: "Técnico", rotulo: "Curso técnico" },
-  { valor: "Superior", rotulo: "Faculdade" },
-];
+export const EXPERIENCIAS = op(["Nunca trabalhei", "Menos de 6 meses", "6 meses a 1 ano", "1 a 3 anos", "3 a 5 anos", "Mais de 5 anos"]);
+
+export const JA_INDUSTRIA = op(["Sim, com carteira assinada", "Sim, como temporário/terceiro", "Não"]);
+
+export const SEGMENTOS = op([
+  "Automotiva/autopeças", "Metalúrgica", "Plástico/borracha", "Química/tintas", "Alimentícia", "Farmacêutica/cosmética",
+  "Embalagens/papel", "Eletroeletrônica", "Centro de distribuição/e-commerce", "Construção/montagem industrial", "Outra",
+]);
+
+export const ESCOLARIDADES = op([
+  "Fundamental incompleto", "Fundamental completo", "Médio incompleto", "Médio completo",
+  "Técnico (cursando ou completo)", "Superior (cursando ou completo)",
+]);
 
 export const CNHS = [
   { valor: "", rotulo: "Não tenho" },
@@ -148,28 +143,31 @@ export const CNHS = [
 ];
 
 export const DISPONIBILIDADES = [
-  { valor: "imediata", rotulo: "Posso começar já" },
+  { valor: "imediata", rotulo: "Imediatamente" },
   { valor: "15_dias", rotulo: "Em até 15 dias" },
   { valor: "30_dias", rotulo: "Em até 30 dias" },
 ];
 
+export const SITUACOES = [
+  { valor: "desempregado", rotulo: "Não" },
+  { valor: "empregado_aberto", rotulo: "Sim, mas quero mudar" },
+  { valor: "empregado_temporario", rotulo: "Sim, em contrato temporário" },
+];
+
 export const TURNOS = [
-  { valor: "qualquer", rotulo: "Qualquer turno" },
   { valor: "1_turno", rotulo: "1º turno" },
   { valor: "2_turno", rotulo: "2º turno" },
-  { valor: "3_turno", rotulo: "3º turno" },
+  { valor: "3_turno", rotulo: "3º turno (noite)" },
   { valor: "comercial", rotulo: "Comercial" },
+  { valor: "12x36", rotulo: "Escala 12x36" },
+  { valor: "revezamento", rotulo: "Revezamento" },
 ];
 
 export const CONTRATOS = [
-  { valor: "CLT", rotulo: "CLT (carteira assinada)" },
+  { valor: "CLT", rotulo: "CLT" },
   { valor: "Temporário", rotulo: "Temporário" },
+  { valor: "Terceirizado", rotulo: "Terceirizado" },
   { valor: "PJ", rotulo: "PJ" },
-];
-
-export const SITUACOES = [
-  { valor: "desempregado", rotulo: "Estou sem trabalho" },
-  { valor: "empregado_aberto", rotulo: "Trabalhando, mas aberto a propostas" },
 ];
 
 // Faixas: grava o teto da faixa, que é o que o filtro "pretensão até" compara.
@@ -180,8 +178,42 @@ export const PRETENSOES = [
   { valor: 3000, rotulo: "R$ 2.501 a 3.000" },
   { valor: 4000, rotulo: "R$ 3.001 a 4.000" },
   { valor: 5000, rotulo: "R$ 4.001 a 5.000" },
-  { valor: 7000, rotulo: "Acima de R$ 5.000" },
+  { valor: 7000, rotulo: "R$ 5.001 a 7.000" },
+  { valor: 10000, rotulo: "Acima de R$ 7.000" },
 ];
+
+export const PCD = [
+  { valor: "nao", rotulo: "Não" },
+  { valor: "sim", rotulo: "Sim" },
+  { valor: "prefiro_nao_dizer", rotulo: "Prefiro não dizer" },
+];
+
+// Pergunta da vaga (tabela perguntas). Muda no banco, sem mexer no site.
+export type PerguntaVaga = {
+  codigo: string;
+  familia: string;
+  ordem: number;
+  texto: string;
+  dica: string | null;
+  tipo: "uma" | "varias";
+  opcoes: string[];
+  opcao_nenhuma: string | null;
+  so_funcoes: number[] | null;
+  obrigatoria: boolean;
+};
+
+export type Resposta = string | string[];
+
+export function perguntasDa(funcaoId: number, familia: string | undefined, todas: PerguntaVaga[]) {
+  if (!familia) return [];
+  return todas
+    .filter((p) => p.familia === familia && (!p.so_funcoes || p.so_funcoes.includes(funcaoId)))
+    .sort((a, b) => a.ordem - b.ordem);
+}
+
+export function respondida(p: PerguntaVaga, r: Resposta | undefined) {
+  return p.tipo === "uma" ? typeof r === "string" && p.opcoes.includes(r) : Array.isArray(r) && r.length > 0;
+}
 
 // Versão do texto de consentimento mostrado no formulário (LGPD).
 export const CONSENTIMENTO_VERSAO = "candidato-v1-2026-10";
@@ -191,16 +223,18 @@ export type DadosCadastro = {
   funcao_informada: string;
   municipio_id: number;
   bairro: string;
-  experiencia_anos: number;
-  escolaridade: string;
+  experiencia_faixa: string;
+  respostas: Record<string, Resposta>;
+  ja_industria: string;
+  segmentos: string[];
+  escolaridade_nivel: string;
   cnh: string;
-  habilidades: string[];
-  cursos: string[];
   disponibilidade: string;
-  turno: string;
-  contratos: string[];
   situacao: string;
+  turnos: string[];
+  contratos: string[];
   pretensao_salarial: number;
+  pcd: string;
   nome: string;
   whatsapp: string;
   email: string;
