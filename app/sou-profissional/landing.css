@@ -17,21 +17,10 @@
 .lp-grid-a{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,480px);gap:48px;align-items:start}
 .lp-grid-a .lp-copy{padding-top:24px}
 
-/* B · Página única */
-.lp-hero-b{padding:36px 0 8px}
-.lp-hero-b p{color:var(--ink-2);font-size:18px;max-width:52ch}
-.lp-fotos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:20px}
-.lp-fotos img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}
-.lp-corpo-b{max-width:760px;padding-block:24px 8px}
 
 
 /* Formulário */
 .lp-form{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:var(--shadow)}
-.lp-form-pagina{padding:0;overflow:hidden}
-.lp-form-pagina>.lp-erro,.lp-form-pagina>.btn{margin:0 22px 22px;width:calc(100% - 44px)}
-.lp-secao{padding:22px;border-bottom:1px solid var(--line)}
-.lp-secao-titulo{display:flex;align-items:center;gap:10px;font:800 26px/1 var(--f-display);margin-bottom:6px}
-.lp-num{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--brand);color:var(--brand-ink);font:700 15px/1 var(--f-body)}
 .lp-progresso{margin-bottom:6px}
 .lp-progresso-txt{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--ink-2)}
 .lp-progresso-txt b{font:800 26px/1 var(--f-display);color:var(--ink)}
@@ -95,18 +84,13 @@
   .lp-grid-a{grid-template-columns:minmax(0,1fr);gap:20px}
   .lp-grid-a .lp-copy{padding-top:0}
   .lp-hero-a{padding:24px 0 28px}
-  .lp-fotos{grid-template-columns:repeat(3,minmax(0,1fr))}
   .lp-como ol{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:560px){
   .lp h1{font-size:34px;margin:6px 0 10px}
   .lp-hero-a{padding:18px 0 24px}
   .lp-hero-a .lp-beneficios{margin-top:12px;font-size:14px;gap:6px 14px}
-  .lp-hero-a p,.lp-hero-b p{font-size:16.5px}
   .lp-form{padding:18px 16px;border-radius:16px}
-  .lp-form-pagina{padding:0}
-  .lp-secao{padding:18px 16px}
-  .lp-form-pagina>.lp-erro,.lp-form-pagina>.btn{margin:0 16px 18px;width:calc(100% - 32px)}
   .lp-ops{grid-template-columns:repeat(2,minmax(0,1fr))}
   .lp-ops[style]{grid-template-columns:repeat(4,minmax(0,1fr))!important}
   .lp-header .btn{padding:0 10px}

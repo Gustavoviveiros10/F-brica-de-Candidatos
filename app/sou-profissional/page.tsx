@@ -3,8 +3,6 @@ import { Marca } from "@/components/marca";
 import { PixelMeta } from "@/components/pixel-meta";
 import { Icon } from "@/lib/icons-component";
 import { acharFuncao } from "@/lib/cadastro-candidato";
-
-const FOTOS = ["foto-line", "foto-truck", "foto-forklift", "foto-maint", "foto-tool", "foto-weld"];
 import { FormCandidato } from "./form";
 import "./landing.css";
 
@@ -13,15 +11,14 @@ export const metadata = {
   description: "Cadastre seu perfil grátis em 2 minutos e seja chamado no WhatsApp pelas indústrias da sua região.",
 };
 
-// ?v=a|b escolhe o layout (opções em avaliação). ?funcao=9 já abre com a função marcada (útil num anúncio por cargo).
-export default async function SouProfissional({ searchParams }: { searchParams: Promise<{ v?: string; funcao?: string }> }) {
+// ?funcao=9 já abre com a função marcada (útil num anúncio por cargo).
+export default async function SouProfissional({ searchParams }: { searchParams: Promise<{ funcao?: string }> }) {
   const q = await searchParams;
-  const v = q.v === "b" ? "b" : "a";
   const id = Number(q.funcao);
   const funcao = id && acharFuncao(id) ? id : undefined;
 
   return (
-    <div className={`lp lp-${v}`}>
+    <div className="lp">
       <PixelMeta />
       <header className="lp-header">
         <div className="wrap lp-header-row">
@@ -30,38 +27,17 @@ export default async function SouProfissional({ searchParams }: { searchParams: 
         </div>
       </header>
 
-      {v === "a" && (
-        <section className="lp-hero-a">
-          <div className="wrap lp-grid-a">
-            <div className="lp-copy">
-              <span className="lp-eyebrow">Para quem trabalha na indústria e na logística</span>
-              <h1 className="display">As indústrias da sua região estão contratando. Deixe elas acharem você.</h1>
-              <p>Cadastre seu perfil grátis. Quando uma empresa se interessar, ela te chama direto no WhatsApp.</p>
-              <Beneficios />
-            </div>
-            <FormCandidato modo="passos" variante="a" funcaoInicial={funcao} />
+      <section className="lp-hero-a">
+        <div className="wrap lp-grid-a">
+          <div className="lp-copy">
+            <span className="lp-eyebrow">Para quem trabalha na indústria e na logística</span>
+            <h1 className="display">As indústrias da sua região estão contratando. Deixe elas acharem você.</h1>
+            <p>Cadastre seu perfil grátis. Quando uma empresa se interessar, ela te chama direto no WhatsApp.</p>
+            <Beneficios />
           </div>
-        </section>
-      )}
-
-      {v === "b" && (
-        <>
-          <section className="lp-hero-b">
-            <div className="wrap">
-              <span className="lp-eyebrow">Cadastro grátis</span>
-              <h1 className="display">Empresas da indústria estão procurando gente como você.</h1>
-              <p>Preencha uma vez e apareça para as empresas da sua região. Leva 2 minutos.</p>
-              <div className="lp-fotos">
-                {FOTOS.map((f) => <img key={f} src={`/img/${f}.jpg`} alt="" />)}
-              </div>
-              <Beneficios />
-            </div>
-          </section>
-          <section className="wrap lp-corpo-b">
-            <FormCandidato modo="pagina" variante="b" funcaoInicial={funcao} />
-          </section>
-        </>
-      )}
+          <FormCandidato funcaoInicial={funcao} />
+        </div>
+      </section>
 
       <section className="wrap lp-como">
         <h2 className="display">Como funciona</h2>

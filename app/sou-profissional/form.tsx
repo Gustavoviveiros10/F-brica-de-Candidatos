@@ -85,7 +85,7 @@ function falta(etapa: number, d: Rascunho): string | null {
   return null;
 }
 
-export function FormCandidato({ modo, variante, funcaoInicial }: { modo: "passos" | "pagina"; variante: string; funcaoInicial?: number }) {
+export function FormCandidato({ funcaoInicial }: { funcaoInicial?: number }) {
   const [d, setD] = useState<Rascunho>(VAZIO);
   const [etapa, setEtapa] = useState(0);
   const [erro, setErro] = useState<string | null>(null);
@@ -93,7 +93,7 @@ export function FormCandidato({ modo, variante, funcaoInicial }: { modo: "passos
   const [enviando, iniciar] = useTransition();
   const armadilha = useRef<HTMLInputElement>(null);
   const topo = useRef<HTMLDivElement>(null);
-  const captacao = useRef<Captacao>({ pagina: `sou-profissional-${variante}` });
+  const captacao = useRef<Captacao>({ pagina: "sou-profissional" });
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
@@ -130,7 +130,7 @@ export function FormCandidato({ modo, variante, funcaoInicial }: { modo: "passos
       const f = falta(i, d);
       if (f) {
         setErro(f);
-        if (modo === "passos") setEtapa(i);
+        setEtapa(i);
         return;
       }
     }
@@ -157,28 +157,8 @@ export function FormCandidato({ modo, variante, funcaoInicial }: { modo: "passos
     <input ref={armadilha} name="site" tabIndex={-1} autoComplete="off" aria-hidden="true" className="lp-armadilha" />
   );
 
-  if (modo === "pagina") {
-    return (
-      <div ref={topo} className="lp-form lp-form-pagina">
-        {secoes.map((s, i) => (
-          <section key={i} className="lp-secao">
-            <h2 className="lp-secao-titulo">
-              <span className="lp-num">{i + 1}</span> {ETAPAS[i]}
-            </h2>
-            {s}
-          </section>
-        ))}
-        {armadilhaInput}
-        {erro && <p className="lp-erro" role="alert">{erro}</p>}
-        <button type="button" className="btn btn-primary btn-lg btn-block" onClick={enviar} disabled={enviando}>
-          {enviando ? "Enviando..." : "Enviar meu cadastro"}
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div ref={topo} className="lp-form lp-form-passos">
+    <div ref={topo} className="lp-form">
       <div className="lp-progresso" aria-label={`Etapa ${etapa + 1} de ${ETAPAS.length}`}>
         <div className="lp-progresso-txt">
           <b>{ETAPAS[etapa]}</b>
