@@ -1,16 +1,22 @@
 "use client";
 import Link from "next/link";
-import { useActionState } from "react";
+import { use, useActionState } from "react";
 import { recuperar } from "./actions";
 import { BotaoEnviar } from "@/components/botao-enviar";
 import { TelaAuth } from "@/components/marca";
 
-export default function Recuperar() {
+export default function Recuperar({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
+  const { erro } = use(searchParams);
   const [estado, acao] = useActionState(recuperar, null);
   return (
     <TelaAuth titulo="Busque primeiro. Pague só para liberar." texto="Pesquisar e comparar candidatos não gasta crédito.">
       <h1 className="display">Nova senha</h1>
       <p className="muted">Informe o e-mail da conta. Enviamos um link para criar outra senha.</p>
+      {erro === "link" && !estado?.ok && (
+        <div className="form-erro" style={{ marginTop: 16 }} role="alert">
+          Esse link expirou ou já foi usado. Peça um novo abaixo e abra o e-mail mais recente.
+        </div>
+      )}
       {estado?.ok ? (
         <div className="form-ok" style={{ marginTop: 24 }} role="status">{estado.ok}</div>
       ) : (
