@@ -280,25 +280,13 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .cta-final h2{font:800 clamp(38px,5.4vw,72px)/.94 var(--f-display);text-wrap:balance;max-width:20ch}
 .cta-final p{margin:16px 0 28px;color:var(--on-deep-2);max-width:46ch;font-size:17px}
 
-/* Separação empresa × candidato (opções de teste) */
-.faixa-cand{background:var(--brand-soft);color:var(--brand-soft-ink);font-size:14px;border-bottom:1px solid var(--line)}
-.faixa-cand .wrap{display:flex;flex-wrap:wrap;gap:4px 10px;justify-content:center;align-items:center;min-height:40px;padding-block:6px;text-align:center}
-.faixa-cand a{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:inherit;text-underline-offset:3px}
-.faixa-cand svg{width:15px;height:15px}
+/* Abas Para empresas / Para candidatos no topo */
 .abas-linha{display:flex;padding-top:8px}
 .abas-publico{display:inline-flex;gap:4px;padding:3px;border-radius:999px;background:var(--surface-2);font-size:13px;font-weight:600}
 .abas-publico a{padding:5px 14px;border-radius:999px;color:var(--ink-2);text-decoration:none}
 .abas-publico a:hover{color:var(--ink)}
 .abas-publico a.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(11,33,64,.15)}
 .site-header-abas .header-row{min-height:60px}
-@media (max-width:640px){.header-cta .link-cand{display:inline-flex}}
-.cand-fim{background:var(--surface);border-top:1px solid var(--line)}
-.cand-fim-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:clamp(24px,5vw,64px);align-items:center;padding-block:clamp(40px,6vw,80px)}
-.cand-fim img{width:100%;height:auto;aspect-ratio:16/11;object-fit:cover;border-radius:18px}
-.cand-fim h2{font:800 clamp(32px,4vw,52px)/.96 var(--f-display);text-wrap:balance}
-.cand-fim p{margin:14px 0 24px;color:var(--ink-2);font-size:17px;max-width:46ch}
-@media (max-width:760px){.cand-fim-grid{grid-template-columns:minmax(0,1fr)}.cand-fim img{aspect-ratio:16/9}}
-@media (max-width:480px){.header-row:has(.link-cand) .brand-text{display:none}}
 .foot-grid:has(> :nth-child(4)){grid-template-columns:minmax(0,1.2fr) repeat(3,minmax(0,.6fr))}
 @media (max-width:960px){.foot-grid:has(> :nth-child(4)){grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.foot-grid:has(> :nth-child(4))>:first-child{grid-column:1/-1}}
 @media (max-width:640px){.foot-grid:has(> :nth-child(4)){grid-template-columns:minmax(0,1fr)}}

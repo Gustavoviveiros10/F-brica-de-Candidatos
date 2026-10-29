@@ -4,9 +4,6 @@ import { readFileSync, writeFileSync } from "node:fs";
 const pares = [
   ["content/home.html", "lib/content/home.ts", "HOME_HTML"],
   ["content/sprite.svg", "lib/content/sprite.ts", "SPRITE_SVG"],
-  ["content/home-teste-a.html", "lib/content/home-teste-a.ts", "HOME_TESTE_A_HTML"],
-  ["content/home-teste-b.html", "lib/content/home-teste-b.ts", "HOME_TESTE_B_HTML"],
-  ["content/home-teste-c.html", "lib/content/home-teste-c.ts", "HOME_TESTE_C_HTML"],
 ];
 for (const [origem, destino, nome] of pares) {
   const texto = readFileSync(origem, "utf8");
