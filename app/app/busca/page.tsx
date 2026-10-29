@@ -1,50 +1,54 @@
 import Link from "next/link";
 import { exigirEmpresa } from "@/lib/conta";
-import { CATEGORIAS, DISPONIBILIDADES, MENSAGEM_PADRAO, TEMPERATURAS, TURNOS } from "@/lib/formato";
-import { Icon } from "@/lib/icons-component";
+import { CATEGORIAS, MENSAGEM_PADRAO } from "@/lib/formato";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { Candidato } from "@/lib/tipos";
+import type { PerguntaVaga } from "@/lib/cadastro-candidato";
+import { perguntasFiltro, respostasDaUrl, um, type ParamsBusca } from "@/lib/filtros-busca";
 import { comPrimeiroNome } from "@/lib/primeiros-nomes";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoCandidato } from "@/components/cartao-candidato";
+import { FiltrosBusca, type Layout } from "@/components/filtros-busca";
 
 export const metadata = { title: "Buscar candidatos · Fábrica de Candidatos" };
 
 const POR_PAGINA = 20;
-const RAIOS = [10, 20, 30, 50, 80, 150];
-const EXPERIENCIAS = [1, 2, 3, 5, 8];
-const TURNOS_FILTRO = Object.fromEntries(Object.entries(TURNOS).filter(([k]) => k !== "qualquer"));
-const ESCOLARIDADES = ["Ensino fundamental", "Ensino médio completo", "Técnico", "Superior"];
-const CONTRATOS = ["CLT", "PJ", "Temporário", "Terceirizado"];
 
 type Opcoes = {
   cidades: { id: number; nome: string; uf: string; total: number }[];
-  funcoes: { id: number; nome: string; categoria: string; total: number }[];
+  funcoes: { id: number; nome: string; categoria: string; familia: string | null; total: number }[];
   habilidades: string[];
   cursos: string[];
 };
 
-type Filtros = Partial<Record<"funcao" | "categoria" | "cidade" | "raio" | "exp" | "hab" | "curso" | "esc" | "turno" | "contrato" | "disp" | "temp" | "pagina", string>>;
+const num = (v?: string | string[]) => {
+  const x = um(v);
+  return x && /^\d+$/.test(x) ? Number(x) : null;
+};
+const txt = (v?: string | string[]) => um(v) ?? null;
 
-const num = (v?: string) => (v && /^\d+$/.test(v) ? Number(v) : null);
-const txt = (v?: string) => (v ? v : null);
-
-export default async function Busca({ searchParams }: { searchParams: Promise<Filtros> }) {
+export default async function Busca({ searchParams }: { searchParams: Promise<ParamsBusca> }) {
   const f = await searchParams;
   const { empresa } = await exigirEmpresa();
   const supabase = await supabaseServer();
+  // Enquanto o Gustavo escolhe o layout dos filtros: ?layout=a|b|c.
+  const layout: Layout = um(f.layout) === "a" || um(f.layout) === "c" ? (um(f.layout) as Layout) : "b";
 
   // Sem cidade na URL, a busca parte da cidade da empresa. "cidade=" vazio = Brasil todo.
   const cidade = f.cidade === undefined ? empresa.municipio_id : num(f.cidade);
   const raio = num(f.raio) ?? 30;
   const pagina = Math.max(1, num(f.pagina) ?? 1);
   // A home manda ?categoria=solda; o seletor de função manda funcao=cat:solda.
-  const catBruta = f.funcao?.startsWith("cat:") ? f.funcao.slice(4) : f.funcao ? null : f.categoria;
+  const funcaoTxt = um(f.funcao);
+  const catBruta = funcaoTxt?.startsWith("cat:") ? funcaoTxt.slice(4) : funcaoTxt ? null : um(f.categoria);
   const categoria = catBruta && catBruta in CATEGORIAS ? catBruta : null;
   const funcaoId = categoria ? null : num(f.funcao);
+  // Perguntas da vaga (r_<codigo>). O banco só aplica as que são da família da função escolhida.
+  const respostas = respostasDaUrl(f);
 
-  const [{ data: opcoesRaw }, { data: linhas, error }] = await Promise.all([
+  const [{ data: opcoesRaw }, { data: perguntasRaw }, { data: linhas, error }] = await Promise.all([
     supabase.rpc("opcoes_filtros"),
+    supabase.from("perguntas").select("codigo,familia,ordem,texto,dica,tipo,opcoes,opcao_nenhuma,so_funcoes,obrigatoria").eq("ativa", true),
     supabase.rpc("buscar_candidatos", {
       p_funcao_id: funcaoId,
       p_categoria: categoria,
@@ -57,7 +61,14 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
       p_turno: txt(f.turno),
       p_contrato: txt(f.contrato),
       p_disponibilidade: txt(f.disp),
+      p_pretensao_max: num(f.pret),
+      p_situacao: txt(f.sit),
       p_temperatura: txt(f.temp),
+      p_ja_industria: txt(f.ind),
+      p_segmento: txt(f.seg),
+      p_cnh: txt(f.cnh),
+      p_pcd: txt(f.pcd) === "sim",
+      p_respostas: Object.keys(respostas).length ? respostas : null,
       p_limite: POR_PAGINA,
       p_offset: (pagina - 1) * POR_PAGINA,
     }),
@@ -69,7 +80,7 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
 
   // Registra a busca (aba Demanda do admin) só na primeira página.
   if (pagina === 1 && !error) {
-    const filtros = Object.fromEntries(Object.entries({ ...f, cidade: cidade ?? "" }).filter(([k, v]) => v && k !== "pagina"));
+    const filtros = Object.fromEntries(Object.entries({ ...f, cidade: cidade ?? "" }).filter(([k, v]) => v && k !== "pagina" && k !== "layout"));
     await supabase.rpc("registrar_busca", { p_filtros: filtros, p_total: total });
   }
 
@@ -85,9 +96,15 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
     .map((cat) => ({ cat, funcoes: opcoes.funcoes.filter((x) => x.categoria === cat) }))
     .filter((g) => g.funcoes.length);
 
-  const maisAberto = Boolean(f.hab || f.curso || f.esc || f.turno || f.contrato || f.disp || f.temp);
+  // Perguntas da vaga: só com uma função escolhida (cada família tem as suas).
+  const escolhida = opcoes.funcoes.find((x) => x.id === funcaoId);
+  const familia = escolhida?.familia ?? null;
+  const perguntas = perguntasFiltro((perguntasRaw ?? []) as PerguntaVaga[], familia, funcaoId);
+  const titulo = escolhida?.nome ?? null;
+
   const linkPagina = (p: number) => {
-    const q = new URLSearchParams(Object.entries({ ...f, pagina: String(p) }).filter(([, v]) => v !== undefined) as [string, string][]);
+    const q = new URLSearchParams();
+    for (const [k, v] of Object.entries({ ...f, pagina: String(p) })) for (const x of [v ?? []].flat()) q.append(k, x);
     if (f.cidade === undefined && cidade) q.set("cidade", String(cidade));
     return `/app/busca?${q}`;
   };
@@ -96,70 +113,20 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
   return (
     <>
       <CabecalhoPagina titulo="Buscar candidatos" texto="Pesquisar e comparar não gasta crédito." />
-      <form className="filters" method="get">
-        <div className="filters-main">
-          <Campo id="funcao" rotulo="Função">
-            <select className="select" id="f-funcao" name="funcao" defaultValue={f.funcao ?? (categoria ? `cat:${categoria}` : "")}>
-              <option value="">Todas as funções</option>
-              {porCategoria.map((g) => (
-                <optgroup key={g.cat} label={CATEGORIAS[g.cat].nome}>
-                  <option value={`cat:${g.cat}`}>Toda a área de {CATEGORIAS[g.cat].nome}</option>
-                  {g.funcoes.map((x) => (
-                    <option key={x.id} value={x.id}>{x.nome}</option>
-                  ))}
-                </optgroup>
-              ))}
-            </select>
-          </Campo>
-          <Campo id="cidade" rotulo="Cidade">
-            <select className="select" id="f-cidade" name="cidade" defaultValue={cidade ? String(cidade) : ""}>
-              <option value="">Brasil todo</option>
-              {cidades.map((c) => (
-                <option key={c.id} value={c.id}>{c.nome} / {c.uf}</option>
-              ))}
-            </select>
-          </Campo>
-          <Campo id="raio" rotulo="Raio">
-            <select className="select" id="f-raio" name="raio" defaultValue={String(raio)}>
-              {RAIOS.map((r) => (
-                <option key={r} value={r}>{r} km</option>
-              ))}
-            </select>
-          </Campo>
-          <Campo id="exp" rotulo="Experiência">
-            <select className="select" id="f-exp" name="exp" defaultValue={f.exp ?? ""}>
-              <option value="">Qualquer</option>
-              {EXPERIENCIAS.map((r) => (
-                <option key={r} value={r}>{r}+ anos</option>
-              ))}
-            </select>
-          </Campo>
-          <button className="btn btn-primary">
-            <Icon name="search" /> Buscar
-          </button>
-        </div>
-        <details open={maisAberto}>
-          <summary className="linklike small" style={{ display: "inline-flex", marginTop: 12, gap: 6 }}>
-            <Icon name="sliders" className="" /> Mais filtros
-          </summary>
-          <div className="filters-more">
-            <Seletor id="hab" rotulo="Máquina / técnica" valor={f.hab} opcoes={opcoes.habilidades} />
-            <Seletor id="curso" rotulo="Curso / NR" valor={f.curso} opcoes={opcoes.cursos} />
-            <Seletor id="esc" rotulo="Formação" valor={f.esc} opcoes={ESCOLARIDADES} />
-            <Seletor id="turno" rotulo="Turno" valor={f.turno} opcoes={Object.keys(TURNOS_FILTRO)} rotulos={TURNOS_FILTRO} />
-            <Seletor id="contrato" rotulo="Contrato" valor={f.contrato} opcoes={CONTRATOS} />
-            <Seletor id="disp" rotulo="Disponibilidade até" valor={f.disp} opcoes={Object.keys(DISPONIBILIDADES)} rotulos={DISPONIBILIDADES} />
-            <Seletor
-              id="temp"
-              rotulo="Temperatura"
-              valor={f.temp}
-              opcoes={Object.keys(TEMPERATURAS)}
-              rotulos={Object.fromEntries(Object.entries(TEMPERATURAS).map(([k, v]) => [k, v.rotulo]))}
-            />
-          </div>
-        </details>
-      </form>
-
+      <FiltrosBusca
+        layout={layout}
+        f={f}
+        porCategoria={porCategoria}
+        cidades={cidades}
+        cidade={cidade}
+        raio={raio}
+        categoria={categoria}
+        familia={familia}
+        titulo={titulo}
+        perguntas={perguntas}
+        habilidades={opcoes.habilidades}
+        cursos={opcoes.cursos}
+      >
       {error ? (
         <div className="panel">
           <div className="empty">
@@ -210,29 +177,8 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Fi
           )}
         </>
       )}
+      </FiltrosBusca>
     </>
-  );
-}
-
-function Campo({ id, rotulo, children }: { id: string; rotulo: string; children: React.ReactNode }) {
-  return (
-    <div className="field">
-      <label htmlFor={`f-${id}`}>{rotulo}</label>
-      {children}
-    </div>
-  );
-}
-
-function Seletor({ id, rotulo, valor, opcoes, rotulos }: { id: string; rotulo: string; valor?: string; opcoes: string[]; rotulos?: Record<string, string> }) {
-  return (
-    <Campo id={id} rotulo={rotulo}>
-      <select className="select" id={`f-${id}`} name={id} defaultValue={valor ?? ""}>
-        <option value="">Qualquer</option>
-        {opcoes.map((o) => (
-          <option key={o} value={o}>{rotulos?.[o] ?? o}</option>
-        ))}
-      </select>
-    </Campo>
   );
 }
 
