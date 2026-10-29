@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, dataCadastro, experiencia, reais, telefone } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
+import { supabaseBrowser } from "@/lib/supabase/client";
 import type { PerfilCandidato } from "@/lib/tipos";
 
 export type ContatoFicha = { nome: string; whatsapp: string; email: string | null };
@@ -19,6 +20,15 @@ type Props = {
   // Bloco extra logo abaixo do contato (etapa e nota no CRM).
   extra?: React.ReactNode;
 };
+
+const SITUACOES: Record<string, string> = {
+  desempregado: "Sem trabalho, disponível",
+  empregado_aberto: "Trabalhando, aberto a propostas",
+  empregado_temporario: "Em contrato temporário",
+};
+
+// Dados que não vêm nas listas (detalhes_candidato): curso e, depois de liberar, o currículo.
+type Detalhes = { formacao_curso: string | null; formacao_status: string | null; cv_path: string | null };
 
 const atualizado = (d: number) => (d <= 0 ? "hoje" : d === 1 ? "há 1 dia" : `há ${d} dias`);
 
@@ -39,14 +49,43 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
     };
   }, []);
 
+  const [det, setDet] = useState<Detalhes | null>(null);
+  const [abrindoCv, setAbrindoCv] = useState(false);
+  useEffect(() => {
+    let vivo = true;
+    supabaseBrowser()
+      .rpc("detalhes_candidato", { p_id: c.id })
+      .then(({ data }) => vivo && setDet(((data as Detalhes[] | null) ?? [])[0] ?? null));
+    return () => {
+      vivo = false;
+    };
+  }, [c.id, liberado]);
+
+  // Link temporário (5 min): o arquivo nunca fica público.
+  async function baixarCv() {
+    if (!det?.cv_path) return;
+    const aba = window.open("", "_blank");
+    setAbrindoCv(true);
+    const { data } = await supabaseBrowser().storage.from("curriculos").createSignedUrl(det.cv_path, 300);
+    setAbrindoCv(false);
+    if (data?.signedUrl && aba) aba.location.href = data.signedUrl;
+    else aba?.close();
+  }
+
+  const formacao = c.escolaridade
+    ? det?.formacao_curso
+      ? `${det.formacao_curso}${det.formacao_status === "cursando" ? " (cursando)" : ""}`
+      : c.escolaridade
+    : "Não informada";
+
   const campos: [string, string][] = [
     ["Experiência", experiencia(c.experiencia_anos)],
     ["Turno", c.turno ? (TURNOS[c.turno] ?? c.turno) : "Não informado"],
     ["Contrato", c.contratos?.length ? c.contratos.join(", ") : "Não informado"],
     ["Pretensão salarial", c.pretensao_salarial ? reais(c.pretensao_salarial * 100) : "Não informada"],
     ["Disponibilidade", c.disponibilidade === "imediata" ? "Imediata" : `Em ${DISPONIBILIDADES[c.disponibilidade] ?? c.disponibilidade}`],
-    ["Status profissional", c.situacao ?? "Não informado"],
-    ["Formação", c.escolaridade ?? "Não informada"],
+    ["Status profissional", c.situacao ? (SITUACOES[c.situacao] ?? c.situacao) : "Não informado"],
+    ["Formação", formacao],
     ["CNH", c.cnh ?? "Não informada"],
   ];
   const nome = contato?.nome ?? c.primeiro_nome;
@@ -89,8 +128,13 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
                   <div className="row"><span>Nome</span><b>{contato.nome}</b></div>
                   <div className="row"><span>WhatsApp</span><b className="num">{telefone(contato.whatsapp)}</b></div>
                   <div className="row"><span>E-mail</span><b>{contato.email || "Não informado"}</b></div>
-                  <div className="row"><span>Currículo</span><b>{c.tem_cv ? "Enviado" : "Não enviado"}</b></div>
+                  <div className="row"><span>Currículo</span><b>{c.tem_cv || det?.cv_path ? "Enviado" : "Não enviado"}</b></div>
                 </div>
+                {det?.cv_path && (
+                  <button type="button" className="btn btn-secondary btn-block" onClick={baixarCv} disabled={abrindoCv}>
+                    <Icon name="file" /> {abrindoCv ? "Abrindo..." : "Baixar currículo"}
+                  </button>
+                )}
                 {linkWa && (
                   <a className="btn btn-wa btn-block" href={linkWa} target="_blank" rel="noopener">
                     <Icon name="wa" /> Chamar no WhatsApp
