@@ -520,3 +520,49 @@ table.t td .sub{display:block;font-size:12.5px;color:var(--ink-2)}
 .photo{object-fit:cover;object-position:50% 40%;display:block;width:100%;height:100%}.cat-card .photo{transition:transform .4s ease}.cat-card:hover .photo{transform:scale(1.04)}
 .photo{object-position:50% 28%!important}
 
+
+/* Rodapé enxuto (opções em teste) */
+.rod{font-size:14px}
+.rod a{text-decoration:none;color:inherit}
+.rod-marca{display:inline-flex;align-items:center;gap:10px;flex:none}
+.rod-logo{width:34px;height:38px;display:grid;place-items:center;flex:none}
+.rod-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.rod-nome{display:flex;flex-direction:column;line-height:1.1}
+.rod-nome b{font:800 18px/1 var(--f-display);letter-spacing:.01em}
+.rod-nome small{font-size:11.5px;margin-top:3px;opacity:.75}
+.rod-links,.rod-legal{display:flex;flex-wrap:wrap;gap:6px 22px}
+.rod-legal{gap:6px 16px}
+
+.rod-a{background:var(--surface);border-top:1px solid var(--line);padding-block:22px;color:var(--ink)}
+.rod-a-in{display:flex;align-items:center;justify-content:space-between;gap:16px 28px;flex-wrap:wrap}
+.rod-a .rod-links a{font-weight:600}
+.rod-a .rod-links a:hover,.rod-a .rod-legal a:hover{color:var(--brand)}
+.rod-a .rod-legal{color:var(--ink-2);font-size:13px}
+
+.rod-b{background:var(--deep);color:var(--on-deep);border-top:1px solid var(--deep-line);padding-block:28px 18px}
+.rod-b .rod-logo{background:#fff;border-radius:10px;padding:4px;width:42px;height:42px}
+.rod-b-top{display:flex;align-items:center;justify-content:space-between;gap:18px 28px;flex-wrap:wrap}
+.rod-b .rod-links{align-items:center}
+.rod-b .rod-links a{color:var(--on-deep-2);font-weight:600}
+.rod-b .rod-links a:hover{color:var(--on-deep)}
+.rod-b .rod-links a.rod-cand{color:var(--on-deep);border:1px solid var(--deep-line);border-radius:999px;padding:6px 14px}
+.rod-b .rod-links a.rod-cand:hover{border-color:var(--on-deep-accent)}
+.rod-b-base{margin-top:20px;padding-top:14px;border-top:1px solid var(--deep-line);display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;font-size:12.5px;color:var(--on-deep-2)}
+.rod-b-base a:hover{color:var(--on-deep)}
+
+.rod-c{background:var(--surface);border-top:1px solid var(--line);padding-block:30px 18px;color:var(--ink)}
+.rod-c-top{display:flex;justify-content:space-between;gap:24px 48px;flex-wrap:wrap}
+.rod-c-top p{margin:10px 0 0;color:var(--ink-2);font-size:13.5px;max-width:34ch}
+.rod-c-cols{display:flex;gap:20px 56px;flex-wrap:wrap}
+.rod-c-cols h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);margin:0 0 8px;font-weight:700}
+.rod-c-cols a{display:block;padding:3px 0;font-weight:600}
+.rod-c-cols a:hover,.rod-c-base a:hover{color:var(--brand)}
+.rod-c-base{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2)}
+
+@media (max-width:640px){
+  .rod-a-in{flex-direction:column;text-align:center;gap:14px}
+  .rod-a .rod-links,.rod-a .rod-legal{justify-content:center}
+  .rod-b-top{flex-direction:column;align-items:flex-start}
+  .rod-b .rod-links{gap:10px 18px}
+  .rod-c-cols{gap:20px 40px}
+}
