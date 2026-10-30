@@ -146,25 +146,6 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
 .rv.is-in{opacity:1;transform:none}
 
-/* Home: ranking de funções e cidades (lib/ranking-home.ts) */
-.rk-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.rk-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px}
-.rk-card-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.rk-card-head h3{font:700 18px/1.2 var(--f-body);margin:0}
-.rk-ico{width:36px;height:36px;border-radius:10px;background:var(--brand-soft);color:var(--brand-soft-ink);display:grid;place-items:center;flex:none}
-.rk-ico svg{width:19px;height:19px}
-.rk-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
-.rk-row{display:flex;align-items:center;gap:12px}
-.rk-pos{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font:800 15px/1 var(--f-display);background:var(--surface-2);color:var(--ink-2)}
-.rk-pos.rk-top{background:var(--brand);color:var(--brand-ink)}
-.rk-main{flex:1;min-width:0}
-.rk-line{display:flex;justify-content:space-between;gap:10px;font-size:14.5px}
-.rk-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rk-num{font-variant-numeric:tabular-nums}
-.rk-bar{height:8px;border-radius:99px;background:var(--surface-2);margin-top:6px;overflow:hidden}
-.rk-bar i{display:block;height:100%;width:var(--w);border-radius:inherit;background:linear-gradient(90deg,var(--brand),#5FA8F0);transition:width 1.1s cubic-bezier(.2,.7,.2,1) .2s}
-.rk-row.rv:not(.is-in) .rk-bar i{width:0}
-@media (max-width:760px){.rk-grid{grid-template-columns:minmax(0,1fr)}}
 
 /* Home: hero com painel do produto em fundo azul-marinho */
 .hero h1{font-size:clamp(44px,5.8vw,78px);line-height:.95}
