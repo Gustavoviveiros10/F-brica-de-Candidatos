@@ -18,7 +18,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="shell">
       <aside className="sidebar">
         <Link className="side-brand" href="/app">
-          <img className="side-logo" src="/img/logo_s_claro.png" alt="" />
+          <span className="tile">
+            <img src="/img/logo_s.png" alt="" />
+          </span>
           <span>
             <b>Fábrica de Candidatos</b>
           </span>
