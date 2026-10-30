@@ -129,3 +129,5 @@ table.t tr.adm-linha{position:relative}
 @media (prefers-reduced-motion:reduce){.adm-lista-anim>*{animation:none}}
 .adm-kpis:has(> :nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:760px){.adm-kpis:has(> :nth-child(3):last-child){grid-template-columns:1fr}}
+
+.side-brand .adm-tag{color:#1763B3}
