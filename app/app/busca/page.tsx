@@ -8,7 +8,7 @@ import { perguntasFiltro, respostasDaUrl, um, type ParamsBusca } from "@/lib/fil
 import { comPrimeiroNome } from "@/lib/primeiros-nomes";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoCandidato } from "@/components/cartao-candidato";
-import { FiltrosBusca, type Layout } from "@/components/filtros-busca";
+import { FiltrosBusca } from "@/components/filtros-busca";
 
 export const metadata = { title: "Buscar candidatos · Fábrica de Candidatos" };
 
@@ -31,8 +31,6 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Pa
   const f = await searchParams;
   const { empresa } = await exigirEmpresa();
   const supabase = await supabaseServer();
-  // Enquanto o Gustavo escolhe o layout dos filtros: ?layout=a|b|c.
-  const layout: Layout = um(f.layout) === "a" || um(f.layout) === "c" ? (um(f.layout) as Layout) : "b";
 
   // Sem cidade na URL, a busca parte da cidade da empresa. "cidade=" vazio = Brasil todo.
   const cidade = f.cidade === undefined ? empresa.municipio_id : num(f.cidade);
@@ -80,7 +78,7 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Pa
 
   // Registra a busca (aba Demanda do admin) só na primeira página.
   if (pagina === 1 && !error) {
-    const filtros = Object.fromEntries(Object.entries({ ...f, cidade: cidade ?? "" }).filter(([k, v]) => v && k !== "pagina" && k !== "layout"));
+    const filtros = Object.fromEntries(Object.entries({ ...f, cidade: cidade ?? "" }).filter(([k, v]) => v && k !== "pagina"));
     await supabase.rpc("registrar_busca", { p_filtros: filtros, p_total: total });
   }
 
@@ -114,7 +112,6 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Pa
     <>
       <CabecalhoPagina titulo="Buscar candidatos" texto="Pesquisar e comparar não gasta crédito." />
       <FiltrosBusca
-        layout={layout}
         f={f}
         porCategoria={porCategoria}
         cidades={cidades}

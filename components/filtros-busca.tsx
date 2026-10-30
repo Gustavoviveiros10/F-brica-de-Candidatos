@@ -7,7 +7,6 @@ import {
 import { Icon } from "@/lib/icons-component";
 import { FormBusca } from "@/components/form-busca";
 
-export type Layout = "a" | "b" | "c";
 type Op = { valor: string; rotulo: string };
 
 const RAIOS = [10, 20, 30, 50, 80, 150];
@@ -16,7 +15,6 @@ const TEMP_FILTRO = Object.entries(TEMPERATURAS).map(([valor, t]) => ({ valor, r
 const lista = (xs: string[]): Op[] => xs.map((x) => ({ valor: x, rotulo: x }));
 
 type Props = {
-  layout: Layout;
   f: ParamsBusca;
   porCategoria: { cat: string; funcoes: { id: number; nome: string }[] }[];
   cidades: { id: number; nome: string; uf: string }[];
@@ -32,8 +30,7 @@ type Props = {
 };
 
 export function FiltrosBusca(p: Props) {
-  const { layout, f, perguntas } = p;
-  const marcadas = perguntas.reduce((n, q) => n + varios(f[PREFIXO + q.codigo]).length, 0);
+  const { f, perguntas } = p;
   const comunsAtivos = ["hab", "curso", "esc", "turno", "contrato", "disp", "temp", "ind", "seg", "sit", "cnh", "pret", "pcd"].filter((k) => um(f[k])).length;
 
   const funcao = (
@@ -78,7 +75,6 @@ export function FiltrosBusca(p: Props) {
           <Seletor id="curso" rotulo="Curso / NR" valor={um(f.curso)} opcoes={lista(p.cursos)} />
         </>
       )}
-      {layout === "c" && experiencia}
       <Seletor id="ind" rotulo="Já trabalhou em indústria?" valor={um(f.ind)} opcoes={INDUSTRIA_FILTRO} />
       <Seletor id="seg" rotulo="Tipo de empresa em que trabalhou" valor={um(f.seg)} opcoes={SEGMENTOS_FILTRO} />
       <Seletor id="esc" rotulo="Até onde estudou" valor={um(f.esc)} opcoes={ESCOLARIDADES_FILTRO} />
@@ -102,46 +98,6 @@ export function FiltrosBusca(p: Props) {
     </div>
   );
 
-  if (layout === "c") {
-    return (
-      <div className="fb-c">
-        <details className="fb-c-gaveta">
-          <summary className="btn btn-secondary">
-            <Icon name="sliders" /> Filtros{marcadas + comunsAtivos ? ` (${marcadas + comunsAtivos})` : ""}
-          </summary>
-          <FormBusca className="filters fb-c-form">
-            {funcao}
-            {cidade}
-            {raio}
-            {perguntas.length > 0 && (
-              <div className="fb-c-grupo">
-                {cabecalhoVaga}
-                {perguntas.map((q) => (
-                  <details key={q.codigo} className="fb-c-pergunta" open={varios(f[PREFIXO + q.codigo]).length > 0 || q.ordem <= 2}>
-                    <summary>{q.texto}</summary>
-                    <div className="fb-c-ops">
-                      {q.opcoes.map((o) => (
-                        <label key={o} className="check">
-                          <input type="checkbox" name={PREFIXO + q.codigo} value={o} defaultChecked={varios(f[PREFIXO + q.codigo]).includes(o)} /> {o}
-                        </label>
-                      ))}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            )}
-            <div className="fb-c-grupo">
-              <div className="fb-vaga-head"><b>Sobre o candidato</b></div>
-              {comuns}
-            </div>
-            {buscar}
-          </FormBusca>
-        </details>
-        <div className="fb-c-res">{p.children}</div>
-      </div>
-    );
-  }
-
   return (
     <>
       <FormBusca className="filters">
@@ -158,19 +114,6 @@ export function FiltrosBusca(p: Props) {
         {perguntas.length > 0 && (
           <div className="fb-vaga">
             {cabecalhoVaga}
-            {layout === "a" ? (
-              <div className="fb-a-grade">
-                {perguntas.map((q) => (
-                  <Seletor
-                    key={q.codigo}
-                    id={PREFIXO + q.codigo}
-                    rotulo={q.texto}
-                    valor={um(f[PREFIXO + q.codigo])}
-                    opcoes={lista(q.opcoes)}
-                  />
-                ))}
-              </div>
-            ) : (
               <div className="fb-b-grade">
                 {perguntas.map((q) => (
                   <fieldset key={q.codigo} className="fb-b-pergunta">
@@ -188,7 +131,6 @@ export function FiltrosBusca(p: Props) {
                   </fieldset>
                 ))}
               </div>
-            )}
           </div>
         )}
         <details open={comunsAtivos > 0}>
