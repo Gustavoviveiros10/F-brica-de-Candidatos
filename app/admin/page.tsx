@@ -29,7 +29,7 @@ export default async function AdminVisaoGeral() {
     <>
       <CabecalhoPagina
         titulo="Visão geral"
-        texto={`Tudo o que está acontecendo na Fábrica, numa tela só. ${n(r.candidatos_ativos)} candidatos ativos na base.`}
+        texto={`Tudo o que está acontecendo na Fábrica, numa tela só. ${n(r.candidatos_ativos)} candidatos ativos na base (ver em Candidatos).`}
       />
       <KpisAdmin r={r} />
       <div className="vg-duas">
