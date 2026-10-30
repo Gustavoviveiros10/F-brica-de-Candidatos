@@ -19,9 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <img src="/img/logo_s.png" alt="" />
           </span>
           <span>
-            <b>Fábrica</b>
-            <small>de Candidatos</small>
-            <br />
+            <b>Fábrica de Candidatos</b>
             <span className="adm-tag">Painel admin</span>
           </span>
         </Link>
