@@ -1,7 +1,7 @@
 import { CATEGORIAS, TEMPERATURAS, TURNOS } from "@/lib/formato";
 import { DISPONIBILIDADES, type PerguntaVaga } from "@/lib/cadastro-candidato";
 import {
-  CNHS_FILTRO, CONTRATOS_FILTRO, ESCOLARIDADES_FILTRO, EXPERIENCIAS_FILTRO, INDUSTRIA_FILTRO, PREFIXO,
+  CNHS_FILTRO, CONTRATOS_FILTRO, FILTROS_EXTRAS, ESCOLARIDADES_FILTRO, EXPERIENCIAS_FILTRO, INDUSTRIA_FILTRO, PREFIXO,
   PRETENSOES_FILTRO, SEGMENTOS_FILTRO, SITUACOES_FILTRO, um, varios, type ParamsBusca,
 } from "@/lib/filtros-busca";
 import { Icon } from "@/lib/icons-component";
@@ -108,6 +108,8 @@ export function FiltrosBusca(p: Props) {
           {experiencia}
           {buscar}
         </div>
+        {FILTROS_EXTRAS && (
+          <>
         {!um(f.funcao) || um(f.funcao)?.startsWith("cat:") ? (
           <p className="small muted fb-dica">Escolha uma função para filtrar pelas perguntas da vaga (máquinas, cursos, CNH...).</p>
         ) : null}
@@ -140,6 +142,8 @@ export function FiltrosBusca(p: Props) {
           </summary>
           <div className="filters-more">{comuns}</div>
         </details>
+          </>
+        )}
       </FormBusca>
       {p.children}
     </>
