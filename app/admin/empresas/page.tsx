@@ -6,7 +6,7 @@ import { telefone } from "@/lib/formato";
 import { MOTIVOS, PAPEIS, cnpj, comParametros, n, quando, type EmpresaLinha, type FichaEmpresa } from "@/lib/admin";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { ChipStatus, Paginacao, TabelaEmpresas, Vazio } from "@/components/admin/blocos";
-import { FormAjuste, FormPlano, FormStatus } from "@/components/admin/formularios-empresa";
+import { FormAjuste, FormCancelarPlano, FormPlano, FormStatus } from "@/components/admin/formularios-empresa";
 import { FecharComEsc } from "@/components/admin/fechar-com-esc";
 
 export const metadata = { title: "Empresas · Painel admin" };
@@ -27,7 +27,7 @@ async function Ficha({ id, fechar }: { id: string; fechar: string }) {
   const supabase = await supabaseServer();
   const [{ data, error }, { data: planos }] = await Promise.all([
     supabase.rpc("admin_empresa", { p_id: id }),
-    supabase.from("planos").select("id,nome,creditos").eq("ativo", true).order("ordem"),
+    supabase.from("planos").select("id,nome,creditos,preco_centavos").eq("ativo", true).order("ordem"),
   ]);
   if (error || !data) return null;
   const e = data as FichaEmpresa;
@@ -83,7 +83,8 @@ async function Ficha({ id, fechar }: { id: string; fechar: string }) {
 
           <div className="adm-forms">
             <FormAjuste empresaId={e.id} />
-            <FormPlano empresaId={e.id} planos={planos ?? []} atual={e.plano_id} />
+            <FormPlano empresaId={e.id} planos={planos ?? []} atual={e.plano_id} temPlano={!!e.plano_id} />
+            {e.plano_id && <FormCancelarPlano empresaId={e.id} />}
             <FormStatus empresaId={e.id} status={e.status} />
           </div>
 

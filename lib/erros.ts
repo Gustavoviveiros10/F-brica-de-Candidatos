@@ -14,6 +14,9 @@ const MENSAGENS: Record<string, string> = {
   PLANO_INVALIDO: "Esse plano não existe ou está desativado.",
   STATUS_INVALIDO: "Status inválido.",
   EMPRESA_NAO_ENCONTRADA: "Empresa não encontrada.",
+  METODO_INVALIDO: "Escolha como a empresa pagou: Pix, boleto ou cartão.",
+  VALOR_INVALIDO: "Confira o valor recebido.",
+  CANDIDATO_NAO_ENCONTRADO: "Candidato não encontrado.",
   saldo_creditos_check: "O saldo não pode ficar negativo. Tire no máximo o que a empresa tem.",
 };
 

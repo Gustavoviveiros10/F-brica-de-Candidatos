@@ -38,13 +38,13 @@ export function KpisAdmin({ r }: { r: ResumoAdmin }) {
         <div className="v num">{n(r.creditos_vendidos_mes)}</div>
         <div className="s">{n(r.saldo_total)} no saldo das empresas</div>
       </Link>
-      <div className="kpi adm-kpi">
+      <Link className="kpi vg-kpi adm-kpi" href="/admin/financeiro">
         <div className="l">Receita do mês</div>
         <div className="v num">{reais(r.receita_mes)}</div>
         <div className="s">
-          {r.pagamentos_mes ? `${n(r.pagamentos_mes)} ${r.pagamentos_mes === 1 ? "pagamento" : "pagamentos"}` : "Pagamento online ainda não ligado"}
+          {r.pagamentos_mes ? `${n(r.pagamentos_mes)} ${r.pagamentos_mes === 1 ? "pagamento" : "pagamentos"}` : "Nenhum pagamento registrado"} · ver Financeiro
         </div>
-      </div>
+      </Link>
     </div>
   );
 }

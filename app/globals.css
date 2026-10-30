@@ -519,3 +519,24 @@ table.t td .sub{display:block;font-size:12.5px;color:var(--ink-2)}
 .photo{object-fit:cover;object-position:50% 40%;display:block;width:100%;height:100%}.cat-card .photo{transition:transform .4s ease}.cat-card:hover .photo{transform:scale(1.04)}
 .photo{object-position:50% 28%!important}
 
+/* Rodapé enxuto da home (linha única) */
+.rod{font-size:14px}
+.rod a{text-decoration:none;color:inherit}
+.rod-marca{display:inline-flex;align-items:center;gap:10px;flex:none}
+.rod-logo{width:34px;height:38px;display:grid;place-items:center;flex:none}
+.rod-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.rod-nome{display:flex;flex-direction:column;line-height:1.1}
+.rod-nome b{font:800 18px/1 var(--f-display);letter-spacing:.01em}
+.rod-links,.rod-legal{display:flex;flex-wrap:wrap;gap:6px 22px}
+.rod-legal{gap:6px 16px}
+
+.rod-a{background:var(--surface);border-top:1px solid var(--line);padding-block:22px;color:var(--ink)}
+.rod-a-in{display:flex;align-items:center;justify-content:space-between;gap:16px 28px;flex-wrap:wrap}
+.rod-a .rod-links a{font-weight:600}
+.rod-a .rod-links a:hover,.rod-a .rod-legal a:hover{color:var(--brand)}
+.rod-a .rod-legal{color:var(--ink-2);font-size:13px}
+
+@media (max-width:640px){
+  .rod-a-in{flex-direction:column;text-align:center;gap:14px}
+  .rod-a .rod-links,.rod-a .rod-legal{justify-content:center}
+}
