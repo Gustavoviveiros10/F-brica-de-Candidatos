@@ -5,6 +5,8 @@ import { Icon } from "@/lib/icons-component";
 
 const ITENS = [
   ["/admin", "Visão geral", "grid"],
+  ["/admin/financeiro", "Financeiro", "receipt"],
+  ["/admin/candidatos", "Candidatos", "users"],
   ["/admin/empresas", "Empresas", "building"],
   ["/admin/creditos", "Créditos", "card"],
   ["/admin/liberacoes", "Liberações", "unlock"],
@@ -16,7 +18,7 @@ export function MenuAdmin() {
   return (
     <nav className="side-nav" aria-label="Menu do admin">
       {ITENS.map(([href, rotulo, icone]) => (
-        <Link key={href} href={href} aria-current={atual === href ? "page" : undefined}>
+        <Link key={href} href={href} aria-current={atual === href || (href !== "/admin" && atual.startsWith(href + "/")) ? "page" : undefined}>
           <Icon name={icone} />
           {rotulo}
         </Link>

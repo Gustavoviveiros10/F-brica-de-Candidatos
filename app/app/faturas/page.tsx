@@ -2,6 +2,7 @@ import { exigirEmpresa } from "@/lib/conta";
 import { data as fdata, reais } from "@/lib/formato";
 import { supabaseServer } from "@/lib/supabase/server";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import { METODOS } from "@/lib/admin";
 
 export const metadata = { title: "Faturas · Fábrica de Candidatos" };
 
@@ -32,7 +33,7 @@ export default async function Faturas() {
                     <br />
                     <span className="small muted">
                       {fdata(p.pago_em ?? p.criado_em)}
-                      {p.metodo && ` · ${p.metodo === "pix" ? "Pix" : "Cartão"}`}
+                      {p.metodo && ` · ${METODOS[p.metodo] ?? p.metodo}`}
                     </span>
                   </span>
                   <span className={`chip ${p.status === "pago" ? "chip-ok" : ""}`}>{STATUS[p.status] ?? p.status}</span>
