@@ -4,7 +4,7 @@ import { CATEGORIAS, MENSAGEM_PADRAO } from "@/lib/formato";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { Candidato } from "@/lib/tipos";
 import type { PerguntaVaga } from "@/lib/cadastro-candidato";
-import { perguntasFiltro, respostasDaUrl, um, type ParamsBusca } from "@/lib/filtros-busca";
+import { FILTROS_EXTRAS, perguntasFiltro, respostasDaUrl, um, type ParamsBusca } from "@/lib/filtros-busca";
 import { comPrimeiroNome } from "@/lib/primeiros-nomes";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
 import { CartaoCandidato } from "@/components/cartao-candidato";
@@ -43,6 +43,8 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Pa
   const funcaoId = categoria ? null : num(f.funcao);
   // Perguntas da vaga (r_<codigo>). O banco só aplica as que são da família da função escolhida.
   const respostas = respostasDaUrl(f);
+  // Filtros escondidos (FILTROS_EXTRAS) não valem nem se vierem num link antigo.
+  const x = <T,>(v: T) => (FILTROS_EXTRAS ? v : null);
 
   const [{ data: opcoesRaw }, { data: perguntasRaw }, { data: linhas, error }] = await Promise.all([
     supabase.rpc("opcoes_filtros"),
@@ -53,20 +55,20 @@ export default async function Busca({ searchParams }: { searchParams: Promise<Pa
       p_municipio_id: cidade,
       p_raio_km: raio,
       p_experiencia_min: num(f.exp),
-      p_habilidade: txt(f.hab),
-      p_curso: txt(f.curso),
-      p_escolaridade: txt(f.esc),
-      p_turno: txt(f.turno),
-      p_contrato: txt(f.contrato),
-      p_disponibilidade: txt(f.disp),
-      p_pretensao_max: num(f.pret),
-      p_situacao: txt(f.sit),
-      p_temperatura: txt(f.temp),
-      p_ja_industria: txt(f.ind),
-      p_segmento: txt(f.seg),
-      p_cnh: txt(f.cnh),
-      p_pcd: txt(f.pcd) === "sim",
-      p_respostas: Object.keys(respostas).length ? respostas : null,
+      p_habilidade: x(txt(f.hab)),
+      p_curso: x(txt(f.curso)),
+      p_escolaridade: x(txt(f.esc)),
+      p_turno: x(txt(f.turno)),
+      p_contrato: x(txt(f.contrato)),
+      p_disponibilidade: x(txt(f.disp)),
+      p_pretensao_max: x(num(f.pret)),
+      p_situacao: x(txt(f.sit)),
+      p_temperatura: x(txt(f.temp)),
+      p_ja_industria: x(txt(f.ind)),
+      p_segmento: x(txt(f.seg)),
+      p_cnh: x(txt(f.cnh)),
+      p_pcd: FILTROS_EXTRAS && txt(f.pcd) === "sim",
+      p_respostas: FILTROS_EXTRAS && Object.keys(respostas).length ? respostas : null,
       p_limite: POR_PAGINA,
       p_offset: (pagina - 1) * POR_PAGINA,
     }),

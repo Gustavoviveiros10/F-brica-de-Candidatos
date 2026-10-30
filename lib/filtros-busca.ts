@@ -8,6 +8,10 @@ export type ParamsBusca = Record<string, string | string[] | undefined>;
 export const um = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v) || undefined;
 export const varios = (v?: string | string[]) => (Array.isArray(v) ? v : v ? [v] : []);
 
+// Enquanto a base tem poucos candidatos, a busca mostra só Função, Cidade, Raio e Experiência
+// (pedido do Gustavo em 2026-10-30). Mudar para true traz de volta as perguntas da vaga e os filtros gerais.
+export const FILTROS_EXTRAS = false;
+
 // Cada pergunta da vaga vai na URL como r_<codigo>, repetido quando tem mais de uma marcada.
 export const PREFIXO = "r_";
 
