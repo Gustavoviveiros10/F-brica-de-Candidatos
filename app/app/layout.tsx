@@ -6,7 +6,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { MenuLateral } from "@/components/menu-lateral";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const { empresa } = await exigirEmpresa();
+  const { empresa, admin } = await exigirEmpresa();
   const supabase = await supabaseServer();
   const { data: plano } = empresa.plano_id
     ? await supabase.from("planos").select("creditos").eq("id", empresa.plano_id).maybeSingle()
@@ -37,6 +37,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               <i style={{ width: `${pct}%` }} />
             </div>
           </div>
+          {admin && (
+            <Link className="side-link" href="/admin">
+              Painel admin da Fábrica
+            </Link>
+          )}
           <form action="/sair" method="post">
             <button className="side-link">Sair</button>
           </form>
