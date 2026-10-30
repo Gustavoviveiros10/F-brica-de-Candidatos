@@ -308,7 +308,7 @@ button{cursor:pointer}
 /* ======================================================= APP SHELL == */
 .shell{display:grid;grid-template-columns:262px minmax(0,1fr);min-height:100vh}
 .sidebar{background:var(--deep);color:var(--on-deep);position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:18px 14px;overflow-y:auto}
-.side-brand{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:16px;background:#fff;border-radius:12px;text-decoration:none;color:#0B2140}
+.side-brand{display:flex;align-items:center;gap:10px;margin:-18px -14px 14px;padding:14px 20px;background:#fff;text-decoration:none;color:#0B2140}
 .side-brand .tile{width:36px;height:44px;display:grid;place-items:center;flex:none}
 .side-brand .tile img{width:100%;height:100%;object-fit:contain}
 .side-brand b{font:800 20px/1 var(--f-display);display:block;white-space:nowrap}
@@ -463,7 +463,7 @@ table.t td .sub{display:block;font-size:12.5px;color:var(--ink-2)}
   .foot-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .shell{grid-template-columns:minmax(0,1fr)}
   .sidebar{position:static;height:auto;flex-direction:column;padding:10px 12px;gap:8px}
-  .side-brand{margin-bottom:0}
+  .side-brand{margin:-10px -12px 0;padding:10px 16px}
   .side-nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px}
   .side-nav button{width:auto;white-space:nowrap;padding:9px 12px}
   .side-nav .grp{display:none}
