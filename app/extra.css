@@ -299,8 +299,6 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .av-a.av-hot{background:var(--hot);color:#fff}.av-a.av-warm{background:var(--warm);color:#fff}.av-a.av-cold{background:var(--cold);color:#fff}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .av-a{color:#14110F}}
 :root[data-theme="dark"] .av-a{color:#14110F}
-.av-b.av-hot{background:var(--hot-soft);color:var(--hot);box-shadow:inset 0 0 0 2px var(--hot)}.av-b.av-warm{background:var(--warm-soft);color:var(--warm);box-shadow:inset 0 0 0 2px var(--warm)}.av-b.av-cold{background:var(--cold-soft);color:var(--cold);box-shadow:inset 0 0 0 2px var(--cold)}
-.av-c{background:var(--deep);color:var(--on-deep)}.av-c.av-hot{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--hot)}.av-c.av-warm{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--warm)}.av-c.av-cold{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--cold)}
 .cand{grid-template-columns:80px minmax(0,1fr) auto}
 @media (max-width:640px){.cand{grid-template-columns:56px minmax(0,1fr)}.cand>.av-ini{width:48px;height:48px;font-size:24px;align-self:start;margin-top:4px}}
 .ficha-modal{position:relative}

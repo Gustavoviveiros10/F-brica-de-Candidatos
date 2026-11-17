@@ -1,6 +1,5 @@
 // Bolinha com a inicial do candidato, na cor da temperatura (substitui as fotos dos cards).
-// Estilo escolhido em ESTILO_AVATAR: "a" bolinha cheia, "b" bolinha suave, "c" anel de temperatura.
-const ESTILO_AVATAR = "a";
+// Estilo escolhido pelo Gustavo: A "bolinha cheia" (fundo na cor da temperatura, letra branca).
 
 const CORES: Record<string, string> = { quente: "hot", morno: "warm", frio: "cold" };
 
@@ -14,7 +13,7 @@ type Props = { nome: string | null | undefined; temperatura: string; tamanho?: "
 export function AvatarInicial({ nome, temperatura, tamanho = "md", className }: Props) {
   const cor = CORES[temperatura] ?? "cold";
   return (
-    <span className={`av-ini av-${ESTILO_AVATAR} av-${cor}${tamanho === "lg" ? " av-lg" : ""}${className ? ` ${className}` : ""}`} aria-hidden="true">
+    <span className={`av-ini av-a av-${cor}${tamanho === "lg" ? " av-lg" : ""}${className ? ` ${className}` : ""}`} aria-hidden="true">
       {inicialDe(nome)}
     </span>
   );
