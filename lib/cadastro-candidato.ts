@@ -102,7 +102,7 @@ export const FUNCOES: Record<string, FuncaoCadastro[]> = {
 // "Não achei minha função": grava nesta função (categoria outros) + o nome que a pessoa digitou.
 export const FUNCAO_OUTRA = 140;
 
-// Atalhos na tela: as funções que as fábricas do ABC mais procuram.
+// Atalhos na tela: as funções que as fábricas mais procuram.
 export const POPULARES = [29, 23, 105, 1, 22, 106, 9, 12, 13, 5, 27, 119, 120, 19, 3, 6];
 
 export function acharFuncao(id: number) {
