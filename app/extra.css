@@ -292,3 +292,23 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .fb-pcd{align-self:end;padding-bottom:10px}
 @media (max-width:640px){.fb-b-grade{grid-template-columns:minmax(0,1fr)}}
 .fb-dica{margin-top:10px}
+
+/* Avatar com a inicial do candidato, na cor da temperatura (components/avatar-inicial.tsx) */
+.av-ini{width:64px;height:64px;flex:none;border-radius:50%;display:grid;place-items:center;font:800 32px/1 var(--f-display);user-select:none;justify-self:center}
+.av-ini.av-lg{width:72px;height:72px;font-size:36px}
+.av-a.av-hot{background:var(--hot);color:#fff}.av-a.av-warm{background:var(--warm);color:#fff}.av-a.av-cold{background:var(--cold);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .av-a{color:#14110F}}
+:root[data-theme="dark"] .av-a{color:#14110F}
+.av-b.av-hot{background:var(--hot-soft);color:var(--hot);box-shadow:inset 0 0 0 2px var(--hot)}.av-b.av-warm{background:var(--warm-soft);color:var(--warm);box-shadow:inset 0 0 0 2px var(--warm)}.av-b.av-cold{background:var(--cold-soft);color:var(--cold);box-shadow:inset 0 0 0 2px var(--cold)}
+.av-c{background:var(--deep);color:var(--on-deep)}.av-c.av-hot{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--hot)}.av-c.av-warm{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--warm)}.av-c.av-cold{box-shadow:0 0 0 3px var(--surface),0 0 0 6px var(--cold)}
+.cand{grid-template-columns:80px minmax(0,1fr) auto}
+@media (max-width:640px){.cand{grid-template-columns:56px minmax(0,1fr)}.cand>.av-ini{width:48px;height:48px;font-size:24px;align-self:start;margin-top:4px}}
+.ficha-modal{position:relative}
+.ficha-modal .drawer-close{z-index:1}
+.ficha-topo{display:flex;gap:16px;align-items:center;padding-right:44px}
+.ficha-topo>div{min-width:0}
+@media (max-width:640px){.ficha-topo .av-ini{width:56px;height:56px;font-size:28px}}
+.adm-ccard .b{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;align-items:center}
+.adm-ccard .b>.av-ini{grid-row:span 2;width:48px;height:48px;font-size:24px}
+.adm-ccard .b>.chips{grid-column:1/-1}
+.adm-ccard.oculto .av-ini{filter:grayscale(1);opacity:.6}

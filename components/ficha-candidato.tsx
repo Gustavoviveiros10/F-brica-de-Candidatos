@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, dataCadastro, experiencia, reais, telefone } from "@/lib/formato";
+import { DISPONIBILIDADES, TEMPERATURAS, TURNOS, dataCadastro, experiencia, reais, telefone } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
+import { AvatarInicial } from "./avatar-inicial";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import type { PerfilCandidato } from "@/lib/tipos";
 
@@ -35,7 +36,6 @@ const atualizado = (d: number) => (d <= 0 ? "hoje" : d === 1 ? "há 1 dia" : `h�
 // Ficha do candidato (modal central), usada na busca, nos salvos e no CRM.
 export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeBusca, rodapeBloqueado, extra }: Props) {
   const t = TEMPERATURAS[c.temperatura] ?? TEMPERATURAS.frio;
-  const cat = CATEGORIAS[c.categoria] ?? CATEGORIAS.outros;
 
   const fechar = useRef(onFechar);
   fechar.current = onFechar;
@@ -93,12 +93,9 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
   return (
     <div className="overlay center" role="dialog" aria-modal="true" aria-label="Perfil profissional" onClick={(e) => e.target === e.currentTarget && onFechar()}>
       <section className="drawer ficha-modal">
-        <div className="drawer-art">
-          <img className="art photo" src={cat.foto} alt="" />
-          <button className="icon-btn drawer-close" aria-label="Fechar perfil" onClick={onFechar} autoFocus>
-            <Icon name="close" />
-          </button>
-        </div>
+        <button className="icon-btn drawer-close" aria-label="Fechar perfil" onClick={onFechar} autoFocus>
+          <Icon name="close" />
+        </button>
         <div className="drawer-body">
           <div>
             <div className="chips" style={{ marginBottom: 10 }}>
@@ -113,12 +110,17 @@ export function FichaCandidato({ c, liberado, contato, linkWa, onFechar, cidadeB
               </span>
               <span className="chip">Cadastro em {dataCadastro(c)} ({atualizado(c.atualizado_ha_dias)})</span>
             </div>
-            <h2>{nome || c.funcao}</h2>
-            <p className="muted" style={{ marginTop: 6 }}>
-              {nome && <>{c.funcao} · </>}
-              {c.cidade}/{c.uf}
-              {c.distancia_km != null && cidadeBusca && ` · a ${c.distancia_km} km de ${cidadeBusca}`}
-            </p>
+            <div className="ficha-topo">
+              <AvatarInicial nome={nome || c.funcao} temperatura={c.temperatura} tamanho="lg" />
+              <div>
+                <h2>{nome || c.funcao}</h2>
+                <p className="muted" style={{ marginTop: 6 }}>
+                  {nome && <>{c.funcao} · </>}
+                  {c.cidade}/{c.uf}
+                  {c.distancia_km != null && cidadeBusca && ` · a ${c.distancia_km} km de ${cidadeBusca}`}
+                </p>
+              </div>
+            </div>
           </div>
 
           {liberado &&

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { supabaseServer } from "@/lib/supabase/server";
-import { CATEGORIAS, DISPONIBILIDADES, TEMPERATURAS, TURNOS, data as fdata, experiencia, reais, telefone } from "@/lib/formato";
+import { DISPONIBILIDADES, TEMPERATURAS, TURNOS, data as fdata, experiencia, reais, telefone } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
 import { NOME_ETAPA } from "@/lib/etapas";
 import { comParametros, hora, n, quando, type CandidatoAdmin, type FichaCandidatoAdmin, type ResumoCandidatos } from "@/lib/admin";
 import { CabecalhoPagina } from "@/components/cabecalho-pagina";
+import { AvatarInicial } from "@/components/avatar-inicial";
 import { Paginacao, Vazio } from "@/components/admin/blocos";
 import { FecharComEsc } from "@/components/admin/fechar-com-esc";
 import { FormOcultarCandidato } from "@/components/admin/formularios-empresa";
@@ -343,11 +344,10 @@ export default async function AdminCandidatos({ searchParams }: { searchParams: 
         <>
           <div className="adm-ccards adm-lista-anim">
             {lista.map((c) => {
-              const cat = CATEGORIAS[c.categoria] ?? CATEGORIAS.outros;
               return (
                 <Link key={c.id} className={`adm-ccard${p.id === c.id ? " sel" : ""}${c.ativo ? "" : " oculto"}`} href={comParametros("/admin/candidatos", atuais, { id: c.id })} scroll={false}>
-                  <img src={cat.foto} alt="" loading="lazy" />
                   <div className="b">
+                    <AvatarInicial nome={c.nome} temperatura={c.temperatura} />
                     <b>{c.nome ?? "Sem nome"}</b>
                     <p>
                       {c.funcao ?? "Função não informada"} · {c.cidade ?? "—"}
