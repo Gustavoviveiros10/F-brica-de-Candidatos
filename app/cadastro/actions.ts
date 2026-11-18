@@ -30,6 +30,11 @@ export async function cadastrar(_: EstadoForm, form: FormData): Promise<EstadoFo
     return { erro: "Não foi possível criar a conta. Tente de novo." };
   }
 
+  // Com confirmação de e-mail ligada, o Supabase não dá erro para e-mail repetido:
+  // devolve um usuário sem identidades e não manda e-mail nenhum.
+  if (data.user && (data.user.identities?.length ?? 0) === 0) {
+    return { erro: "Esse e-mail já tem conta. Entre ou recupere a senha." };
+  }
   if (!data.session) {
     return { ok: `Enviamos um link de confirmação para ${email}. Clique nele para ativar a conta.` };
   }
