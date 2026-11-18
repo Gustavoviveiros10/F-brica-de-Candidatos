@@ -36,6 +36,11 @@ export default async function CompletarCadastro() {
         erroInicial={erro}
         iniciais={{ empresa: m.empresa, cnpj: m.cnpj, whatsapp: m.whatsapp?.replace(/^\+55/, ""), uf, municipio_id: m.municipio_id }}
       />
+      <form action="/sair" method="post" style={{ marginTop: 16 }}>
+        <p className="small muted">
+          Entrou com o e-mail errado? <button type="submit" className="linklike">Sair e entrar com outro</button>
+        </p>
+      </form>
     </TelaAuth>
   );
 }

@@ -14,13 +14,14 @@ export default function Recuperar({ searchParams }: { searchParams: Promise<{ er
       <p className="muted">Informe o e-mail da conta. Enviamos um link para criar outra senha.</p>
       {erro === "link" && !estado?.ok && (
         <div className="form-erro" style={{ marginTop: 16 }} role="alert">
-          Esse link expirou ou já foi usado. Peça um novo abaixo e abra o e-mail mais recente.
+          Esse link já foi usado ou foi trocado por um mais novo. Abra o e-mail mais recente ou peça outro abaixo.
         </div>
       )}
       {estado?.ok ? (
         <div className="form-ok" style={{ marginTop: 24 }} role="status">{estado.ok}</div>
       ) : (
         <form action={acao}>
+          {estado?.erro && <div className="form-erro" role="alert">{estado.erro}</div>}
           <div className="field">
             <label htmlFor="rc-email">E-mail</label>
             <input className="input" id="rc-email" name="email" type="email" autoComplete="email" required />

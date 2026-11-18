@@ -3,7 +3,7 @@ const MENSAGENS: Record<string, string> = {
   NAO_AUTENTICADO: "Sua sessão expirou. Entre de novo.",
   JA_VINCULADO: "Seu usuário já está ligado a uma empresa.",
   CNPJ_INVALIDO: "CNPJ inválido. Confira os 14 números.",
-  CNPJ_JA_CADASTRADO: "Esse CNPJ já tem conta. Peça acesso a quem cadastrou a empresa.",
+  CNPJ_JA_CADASTRADO: "Esse CNPJ já está cadastrado com outro e-mail. Saia e entre com o e-mail do primeiro cadastro, ou fale com a Fábrica de Candidatos para liberar.",
   SEM_EMPRESA: "Complete o cadastro da empresa para liberar contatos.",
   EMPRESA_BLOQUEADA: "A conta da empresa está bloqueada. Fale com o suporte.",
   CANDIDATO_INDISPONIVEL: "Esse candidato não está mais disponível.",
