@@ -330,7 +330,7 @@ function SecaoFuncao({ d, mudar }: Props) {
         {termo.length >= 2 && achadas.length === 0 && <div className="lp-dica">Não achamos essa função. Tente outro nome ou use o link abaixo.</div>}
       </Pergunta>
       {termo.length < 2 && (
-        <Pergunta titulo="Mais procuradas pelas fábricas do ABC">
+        <Pergunta titulo="Mais procuradas pelas fábricas">
           <Opcoes opcoes={POPULARES.map((id) => ({ valor: id, rotulo: acharFuncao(id)?.nome ?? "" }))} valor={null} onChange={escolher} />
         </Pergunta>
       )}

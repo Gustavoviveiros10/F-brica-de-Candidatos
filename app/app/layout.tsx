@@ -22,8 +22,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <img src="/img/logo_s.png" alt="" />
           </span>
           <span>
-            <b>Fábrica</b>
-            <small>de Candidatos</small>
+            <b>Fábrica de Candidatos</b>
           </span>
         </Link>
         <MenuLateral />

@@ -32,6 +32,7 @@ type Props = {
 export function FiltrosBusca(p: Props) {
   const { f, perguntas } = p;
   const comunsAtivos = ["hab", "curso", "esc", "turno", "contrato", "disp", "temp", "ind", "seg", "sit", "cnh", "pret", "pcd"].filter((k) => um(f[k])).length;
+  const ativos = comunsAtivos + perguntas.reduce((n, q) => n + varios(f[PREFIXO + q.codigo]).length, 0);
 
   const funcao = (
     <Campo id="funcao" rotulo="Função">
@@ -108,12 +109,14 @@ export function FiltrosBusca(p: Props) {
           {experiencia}
           {buscar}
         </div>
-        {!um(f.funcao) || um(f.funcao)?.startsWith("cat:") ? (
-          <p className="small muted fb-dica">Escolha uma função para filtrar pelas perguntas da vaga (máquinas, cursos, CNH...).</p>
-        ) : null}
-        {perguntas.length > 0 && (
-          <div className="fb-vaga">
-            {cabecalhoVaga}
+        {/* Base ainda pequena: só os 4 filtros acima ficam à mostra; o resto fica guardado aqui. */}
+        <details open={ativos > 0}>
+          <summary className="linklike small" style={{ display: "inline-flex", marginTop: 12, gap: 6 }}>
+            <Icon name="sliders" className="" /> Mais filtros{ativos > 0 && ` (${ativos})`}
+          </summary>
+          {perguntas.length > 0 && (
+            <div className="fb-vaga">
+              {cabecalhoVaga}
               <div className="fb-b-grade">
                 {perguntas.map((q) => (
                   <fieldset key={q.codigo} className="fb-b-pergunta">
@@ -131,13 +134,8 @@ export function FiltrosBusca(p: Props) {
                   </fieldset>
                 ))}
               </div>
-          </div>
-        )}
-        <details open={comunsAtivos > 0}>
-          <summary className="linklike small" style={{ display: "inline-flex", marginTop: 12, gap: 6 }}>
-            <Icon name="sliders" className="" /> {perguntas.length ? "Filtros gerais (todas as vagas)" : "Mais filtros"}
-            {comunsAtivos > 0 && ` (${comunsAtivos})`}
-          </summary>
+            </div>
+          )}
           <div className="filters-more">{comuns}</div>
         </details>
       </FormBusca>
