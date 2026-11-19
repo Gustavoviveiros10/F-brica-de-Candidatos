@@ -310,3 +310,23 @@ a.vg-kpi:hover{border-color:var(--brand)}
 .adm-ccard .b>.av-ini{grid-row:span 2;width:48px;height:48px;font-size:24px}
 .adm-ccard .b>.chips{grid-column:1/-1}
 .adm-ccard.oculto .av-ini{filter:grayscale(1);opacity:.6}
+
+/* Cabeçalho branco com letras azuis (opção C "Logo em destaque", 2026-11-19).
+   Cores fixas, sem tokens: o fundo fica branco também no modo escuro, para o logo azul-marinho aparecer sempre. */
+header.site-header,header.lp-header{background:#FFFFFF;-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:0;box-shadow:0 2px 14px rgba(11,33,64,.12)}
+.site-header .brand-mark,.lp-header .brand-mark{width:50px;height:56px}
+.site-header .brand-name,.lp-header .brand-name{font-size:25px;color:#1763B3}
+.site-header .brand-tag,.lp-header .brand-tag{color:#0F4F95}
+.site-header-abas .header-row{min-height:70px}
+.site-header .nav a{color:#1763B3;font-weight:600}
+.site-header .nav a:hover{background:#E2EDFA;color:#0F4F95}
+.site-header .header-cta .btn-secondary,.lp-header .btn-ghost{background:#FFFFFF;color:#1763B3;border-color:#1763B3}
+.site-header .header-cta .btn-secondary:hover,.lp-header .btn-ghost:hover{background:#E2EDFA;border-color:#0F4F95}
+.site-header .abas-publico{background:#E2EDFA}
+.site-header .abas-publico a{color:#1763B3}
+.site-header .abas-publico a:hover{color:#0F4F95}
+.site-header .abas-publico a.on{background:#FFFFFF;color:#0B2140}
+@media (max-width:480px){
+  .site-header .brand-mark,.lp-header .brand-mark{width:40px;height:46px}
+  .site-header .brand-name,.lp-header .brand-name{font-size:17px}
+}
