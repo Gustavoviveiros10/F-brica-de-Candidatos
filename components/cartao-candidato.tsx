@@ -115,7 +115,7 @@ export function CartaoCandidato({ c, empresa, modelo, saldo: saldoInicial, cidad
           </div>
           {erro && !ficha && !confirmar && (
             <span className="small" style={{ color: "var(--warn)" }}>
-              {erro.msg} {erro.semCreditos && <Link className="linklike" href="/app/creditos">Ver planos</Link>}
+              {erro.msg} {erro.semCreditos && <Link className="linklike" href="/app/creditos">Comprar créditos</Link>}
             </span>
           )}
         </div>
@@ -185,12 +185,12 @@ export function CartaoCandidato({ c, empresa, modelo, saldo: saldoInicial, cidad
                 {!erro && (
                   <div className="lock-box" style={{ marginBottom: 16 }}>
                     <Icon name="alert" />
-                    <div>Seus créditos acabaram. Escolha um plano para liberar este contato.</div>
+                    <div>Seus créditos acabaram. Compre créditos para liberar este contato.</div>
                   </div>
                 )}
                 <div className="actions">
                   <button className="btn btn-secondary" onClick={() => setConfirmar(false)}>Fechar</button>
-                  <Link className="btn btn-primary" href="/app/creditos">Ver planos</Link>
+                  <Link className="btn btn-primary" href="/app/creditos">Comprar créditos</Link>
                 </div>
               </>
             )}
