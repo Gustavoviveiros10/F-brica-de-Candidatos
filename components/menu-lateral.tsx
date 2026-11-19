@@ -8,7 +8,7 @@ const ITENS = [
   ["/app/busca", "Buscar candidatos", "search"],
   ["/app/salvos", "Candidatos salvos", "star"],
   ["/app/liberados", "Contatos liberados", "unlock"],
-  ["/app/creditos", "Plano e créditos", "card"],
+  ["/app/creditos", "Créditos", "card"],
   ["/app/faturas", "Faturas", "receipt"],
   ["/app/usuarios", "Usuários", "users"],
   ["/app/configuracoes", "Configurações", "settings"],

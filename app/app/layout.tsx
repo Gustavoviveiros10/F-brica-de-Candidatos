@@ -2,17 +2,12 @@ import Link from "next/link";
 import { exigirEmpresa } from "@/lib/conta";
 import { iniciais } from "@/lib/formato";
 import { Icon } from "@/lib/icons-component";
-import { supabaseServer } from "@/lib/supabase/server";
 import { MenuLateral } from "@/components/menu-lateral";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { empresa, admin } = await exigirEmpresa();
-  const supabase = await supabaseServer();
-  const { data: plano } = empresa.plano_id
-    ? await supabase.from("planos").select("creditos").eq("id", empresa.plano_id).maybeSingle()
-    : { data: null };
-  const ciclo = plano?.creditos ?? 2;
-  const pct = Math.min(100, Math.round((empresa.saldo_creditos / ciclo) * 100));
+  // Barra do saldo: cheia a partir de 25 créditos (faixa do meio da régua).
+  const pct = Math.min(100, Math.round((empresa.saldo_creditos / 25) * 100));
 
   return (
     <div className="shell">

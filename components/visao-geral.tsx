@@ -43,18 +43,18 @@ export function AvisoCreditos({ saldo, teste }: { saldo: number; teste: boolean 
     return (
       <div className="banner">
         <span>
-          <b>Teste grátis:</b> {saldo} de 2 contatos disponíveis. Escolha um plano para continuar liberando.
+          <b>Teste grátis:</b> {saldo} de 2 contatos disponíveis. Compre créditos para continuar liberando.
         </span>
-        <Link className="btn btn-sm btn-primary" href="/app/creditos">Ver planos</Link>
+        <Link className="btn btn-sm btn-primary" href="/app/creditos">Comprar créditos</Link>
       </div>
     );
   if (saldo <= 1)
     return (
       <div className="banner warn">
         <span>
-          <b>Poucos créditos.</b> Resta {saldo}. Mude de plano antes de acabar.
+          <b>Poucos créditos.</b> Resta {saldo}. Compre mais antes de acabar.
         </span>
-        <Link className="btn btn-sm btn-primary" href="/app/creditos">Ver planos</Link>
+        <Link className="btn btn-sm btn-primary" href="/app/creditos">Comprar créditos</Link>
       </div>
     );
   return null;

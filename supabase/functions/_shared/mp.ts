@@ -20,15 +20,14 @@ export async function mp<T = Record<string, unknown>>(caminho: string, init: { m
   return (texto ? JSON.parse(texto) : {}) as T;
 }
 
-// external_reference que a gente manda pro Mercado Pago: "<tipo>:<empresa_id>:<plano_id>".
-// tipo "ass" = assinatura automática no cartão; "mes" = pagamento de 1 mês (Pix, boleto ou cartão).
-export type Referencia = { tipo: "ass" | "mes"; empresa: string; plano: string };
+// external_reference que a gente manda pro Mercado Pago: "cred:<empresa_id>:<quantidade>".
+export type Referencia = { empresa: string; creditos: number };
 
-export const montarReferencia = (r: Referencia) => `${r.tipo}:${r.empresa}:${r.plano}`;
+export const montarReferencia = (r: Referencia) => `cred:${r.empresa}:${r.creditos}`;
 
 export function lerReferencia(v: unknown): Referencia | null {
-  const m = /^(ass|mes):([0-9a-f-]{36}):([a-z0-9_-]+)$/.exec(String(v ?? ""));
-  return m ? { tipo: m[1] as Referencia["tipo"], empresa: m[2], plano: m[3] } : null;
+  const m = /^cred:([0-9a-f-]{36}):(\d{1,4})$/.exec(String(v ?? ""));
+  return m ? { empresa: m[1], creditos: Number(m[2]) } : null;
 }
 
 export const json = (dados: unknown, status = 200) =>
